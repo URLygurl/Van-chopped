@@ -1,0 +1,6 @@
+---
+name: Style Rules
+description: House style conventions for this repo.
+tags: style
+---
+Always use 2-space indentation.

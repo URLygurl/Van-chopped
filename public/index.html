@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Artifact Repo — Prompts, HTML, Skills &amp; Components</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="logo">◫</span> Artifact Repo
+        <button id="settingsBtn" class="gear" title="Settings / strictness">⚙</button>
+      </div>
+
+      <nav class="filters" id="filters">
+        <button class="filter active" data-type="" data-class="">All <span class="count" id="c-all">0</span></button>
+        <button class="filter" data-type="prompt" data-class="">Prompts <span class="count" id="c-prompt">0</span></button>
+        <div class="group-label">HTML</div>
+        <button class="filter" data-type="html" data-class="document">Documents <span class="count" id="c-doc">0</span></button>
+        <button class="filter" data-type="html" data-class="embedded">Embedded <span class="count" id="c-emb">0</span></button>
+        <div class="group-label">Code &amp; Agents</div>
+        <button class="filter" data-type="component" data-class="">Components <span class="count" id="c-cmp">0</span></button>
+        <button class="filter" data-type="skill" data-class="">Skills <span class="count" id="c-skill">0</span></button>
+        <button class="filter" data-type="agent" data-class="">Agents <span class="count" id="c-agent">0</span></button>
+        <button class="filter" data-type="rule" data-class="">Rules <span class="count" id="c-rule">0</span></button>
+      </nav>
+
+      <div class="group-label">Tags</div>
+      <div class="tags" id="tags"></div>
+
+      <div class="group-label collections-label">Collections
+        <button id="newCollBtn" class="mini" title="New collection">＋</button>
+      </div>
+      <ul class="colls" id="colls"></ul>
+
+      <div class="group-label">Source folders</div>
+      <ul class="roots" id="roots"></ul>
+      <form id="addForm" class="add-form">
+        <input id="addPath" placeholder="Add a folder (e.g. ~/Sites)" />
+        <button type="submit">＋</button>
+      </form>
+
+      <div class="sidebar-foot">
+        <button id="rescanBtn" title="Rescan now">⟳ Rescan</button>
+        <span id="status" class="status"></span>
+      </div>
+    </aside>
+
+    <!-- List / grid column -->
+    <section class="list-col">
+      <div class="list-head">
+        <input id="search" type="search" placeholder="Search name, description, path, tag…" />
+        <div class="view-toggle">
+          <button id="viewList" class="vt active" title="List">☰</button>
+          <button id="viewGrid" class="vt" title="Rendered grid">▦</button>
+        </div>
+      </div>
+      <div id="activeFilter" class="active-filter hidden"></div>
+      <ul id="list" class="list"></ul>
+      <div id="grid" class="grid hidden"></div>
+    </section>
+
+    <!-- Detail column -->
+    <section class="detail-col" id="detail">
+      <div class="empty" id="empty">
+        <div class="empty-mark">◫</div>
+        <p>Select an artifact to view and edit it.</p>
+      </div>
+      <div class="detail-body hidden" id="detailBody">
+        <header class="detail-head">
+          <div class="titles">
+            <h1 id="d-name"></h1>
+            <p id="d-desc" class="desc"></p>
+            <div id="d-tags" class="tag-row"></div>
+          </div>
+          <div class="badges" id="d-badges"></div>
+        </header>
+        <div class="path-row"><code id="d-path"></code>
+          <button id="collBtn" class="mini-btn" title="Add to collection">＋ Collection</button>
+        </div>
+        <div id="d-classification" class="classification hidden"></div>
+
+        <div class="tabs" id="tabs">
+          <button class="tab active" data-tab="source">Source</button>
+          <button class="tab" data-tab="rendered" id="renderedTab">Rendered</button>
+          <button class="tab" data-tab="preview" id="previewTab">Preview</button>
+          <button class="tab" data-tab="fields" id="fieldsTab">Fields</button>
+          <button class="tab" data-tab="meta">Metadata</button>
+          <div class="tab-spacer"></div>
+          <span id="dirty" class="dirty hidden">●&nbsp;unsaved</span>
+          <button id="saveBtn" class="save" disabled>Save ⌘S</button>
+        </div>
+
+        <div class="pane" id="pane-source"><textarea id="editor" spellcheck="false"></textarea></div>
+        <div class="pane hidden" id="pane-rendered"><div id="rendered" class="rendered-md"></div></div>
+        <div class="pane hidden" id="pane-preview"><iframe id="preview" sandbox="allow-same-origin" referrerpolicy="no-referrer"></iframe></div>
+        <div class="pane hidden" id="pane-fields">
+          <div class="fields" id="fields"></div>
+          <div class="fields-foot">
+            <input id="newFieldKey" placeholder="field" class="field-key" />
+            <input id="newFieldVal" placeholder="value" class="field-val" />
+            <button id="addFieldBtn">Add field</button>
+            <button id="saveFieldsBtn" class="save">Save fields</button>
+          </div>
+        </div>
+        <div class="pane hidden" id="pane-meta"><table id="metaTable" class="meta-table"></table></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Settings dialog -->
+  <div id="settings" class="modal hidden">
+    <div class="modal-card">
+      <h3>Settings — strictness</h3>
+      <label class="opt"><input type="checkbox" data-opt="requirePromptFrontmatter"> Prompts must have frontmatter (strict)</label>
+      <div class="opt-group-label">Include types</div>
+      <label class="opt"><input type="checkbox" data-opt="includePrompts"> Prompts</label>
+      <label class="opt"><input type="checkbox" data-opt="includeHtml"> HTML</label>
+      <label class="opt"><input type="checkbox" data-opt="includeComponents"> Components (.jsx/.tsx)</label>
+      <label class="opt"><input type="checkbox" data-opt="includeSkills"> Skills</label>
+      <label class="opt"><input type="checkbox" data-opt="includeAgents"> Agents</label>
+      <label class="opt"><input type="checkbox" data-opt="includeRules"> Rules</label>
+      <div class="modal-foot"><button id="settingsClose" class="save">Done</button></div>
+    </div>
+  </div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

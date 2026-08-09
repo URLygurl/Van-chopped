@@ -1,0 +1,5 @@
+# user-specific runtime state
+config.json
+data/
+node_modules/
+*.log

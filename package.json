@@ -1,0 +1,17 @@
+{
+  "name": "artifact-repo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Discover, browse, and edit prompts and HTML artifacts across your machine — a Chops-style skills repo, retargeted to prompts and HTML with a standalone-vs-embedded qualifier.",
+  "type": "module",
+  "bin": {
+    "artifact-repo": "server.js"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node scripts/seed-demo.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
