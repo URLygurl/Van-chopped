@@ -49,8 +49,15 @@
       </div>
     </aside>
 
+    <div id="backdrop" class="backdrop"></div>
+
     <!-- List / grid column -->
     <section class="list-col">
+      <div class="mobilebar">
+        <button id="mHamb" class="iconbtn" aria-label="Menu">☰</button>
+        <span class="mtitle"><span class="logo">◫</span> Artifact Repo</span>
+        <button id="mTheme" class="iconbtn" aria-label="Toggle theme">◐</button>
+      </div>
       <div class="list-head">
         <input id="search" type="search" placeholder="Search name, description, path, tag…" />
         <div class="view-toggle">
@@ -71,6 +78,7 @@
       </div>
       <div class="detail-body hidden" id="detailBody">
         <header class="detail-head">
+          <button id="mBack" class="mback" aria-label="Back to list">‹ List</button>
           <div class="titles">
             <h1 id="d-name"></h1>
             <p id="d-desc" class="desc"></p>
@@ -79,6 +87,7 @@
           <div class="badges" id="d-badges"></div>
         </header>
         <div class="path-row"><code id="d-path"></code>
+          <button id="promoteBtn" class="mini-btn promote-btn hidden" title="Copy out as a standalone document">⤴ Promote to document</button>
           <button id="collBtn" class="mini-btn" title="Add to collection">＋ Collection</button>
         </div>
         <div id="d-classification" class="classification hidden"></div>

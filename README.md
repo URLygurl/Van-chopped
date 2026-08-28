@@ -48,10 +48,22 @@ Embedded HTML defaults to **read-only** so framework files can't be clobbered.
 
 ---
 
+## Try it without running anything
+
+`demo/index.html` is a **self-contained, zero-backend demo** — the same UI and
+the real classifier/parsers running client-side over an embedded sample library.
+Open it in any browser (or view the hosted version) to click around. Edits in the
+demo stay in memory; the full app below reads and writes your actual files.
+
 ## Features
 
 - **List + rendered grid views** — the grid shows **live HTML thumbnails** and
   typed glyph cards; toggle with ☰ / ▦.
+- **Mobile-responsive** — drawer sidebar, full-width list, slide-in detail with a
+  back button; works on a phone.
+- **Promote embedded → document** — one click copies an embedded HTML file out to
+  your documents folder as a standalone, **editable** document (the original is
+  left untouched). Files in that folder are always treated as editable documents.
 - **Rendered tab** — markdown types (prompts/skills/agents/rules) render to HTML;
   HTML types get a sandboxed **Preview** iframe.
 - **Editable fields & tags** — the **Fields** tab edits frontmatter key/values
@@ -93,6 +105,7 @@ type-agnostic.
 | GET | `/api/artifacts?type=&class=&tag=&collection=&q=` | list + counts + tags + collections |
 | GET | `/api/artifacts/:id` | full record incl. content |
 | PUT | `/api/artifacts/:id` | body `{content}` saves file; body `{frontmatter}` rewrites fields |
+| POST | `/api/artifacts/:id/promote` | copy an embedded HTML file out to the documents folder as an editable document |
 | GET | `/api/raw?id=` | raw body (preview iframe / grid thumbnails) |
 | GET/PUT | `/api/config` | scan paths + strictness options |
 | GET/POST | `/api/collections` | list / create |

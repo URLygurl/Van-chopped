@@ -4,6 +4,7 @@
 
 import http from 'node:http';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadConfig, saveConfig } from './lib/sources.js';
@@ -77,6 +78,26 @@ const server = http.createServer(async (req, res) => {
     }
     if (p.startsWith('/api/collections/') && req.method === 'DELETE') {
       Collections.remove(p.split('/')[3]); return send(res, 200, { ok: true });
+    }
+
+    // ---- promote embedded HTML -> standalone document (copies out to disk) ----
+    if (p.startsWith('/api/artifacts/') && p.endsWith('/promote') && req.method === 'POST') {
+      const a = findById(decodeURIComponent(p.split('/')[3]));
+      if (!a) return send(res, 404, { error: 'not found' });
+      if (!(a.type === 'html' && a.subtype === 'embedded'))
+        return send(res, 400, { error: 'only embedded HTML can be promoted' });
+      const docsDir = config.options.documentsDir || path.join(os.homedir(), 'Documents', 'van-chopped');
+      fs.mkdirSync(docsDir, { recursive: true });
+      const slug = (a.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')) || 'document';
+      let dest = path.join(docsDir, slug + '.html');
+      let n = 1;
+      while (fs.existsSync(dest)) dest = path.join(docsDir, `${slug}-${++n}.html`);
+      fs.copyFileSync(a.path, dest); // original left untouched
+      const scanPaths = config.scanPaths.includes(docsDir) ? config.scanPaths : [...config.scanPaths, docsDir];
+      config = saveConfig({ scanPaths, options: { ...config.options, documentsDir: docsDir } });
+      watcher.watch(config.scanPaths);
+      rescan();
+      return send(res, 200, { ok: true, path: dest });
     }
 
     // ---- artifacts ----

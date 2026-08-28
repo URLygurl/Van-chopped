@@ -150,6 +150,7 @@ async function open(id) {
   dirty = false;
   view === 'grid' ? renderGrid() : renderList();
   renderDetail();
+  document.getElementById('app').classList.add('detail-open'); // mobile: slide detail in
 }
 
 function renderDetail() {
@@ -174,6 +175,9 @@ function renderDetail() {
       <span class="conf">confidence ${(a.classification.confidence * 100) | 0}%</span></h4>
       <ul>${a.classification.reasons.map((r) => `<li>${esc(r)}</li>`).join('')}</ul>`;
   } else box.classList.add('hidden');
+
+  // Promote only for embedded HTML (read-only "inside software" files).
+  $('#promoteBtn').classList.toggle('hidden', !(a.type === 'html' && a.subtype === 'embedded'));
 
   const isMd = ['prompt', 'skill', 'agent', 'rule'].includes(a.type);
   $('#previewTab').classList.toggle('hidden', a.type !== 'html');
@@ -249,6 +253,16 @@ async function saveFields() {
   open(current.id); // reload
 }
 
+// ---- promote embedded HTML -> standalone document ---------------------------
+async function promote() {
+  if (!current || !(current.type === 'html' && current.subtype === 'embedded')) return;
+  const res = await api('/api/artifacts/' + current.id + '/promote', { method: 'POST' });
+  if (res.error) return alert('Promote failed: ' + res.error);
+  await refresh();
+  const hit = items.find((a) => a.path === res.path);
+  if (hit) open(hit.id);
+}
+
 // ---- collections / roots / settings ----------------------------------------
 async function addRoot(p) {
   const cfg = await api('/api/config');
@@ -304,7 +318,22 @@ $('#collBtn').onclick = async () => {
   const c = colls.find((x) => x.name.toLowerCase() === (name || '').toLowerCase());
   if (c) { await fetch('/api/collections/' + c.id + '/toggle', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ artifactId: current.id }) }); refresh(); }
 };
+$('#promoteBtn').onclick = promote;
 document.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); save(); } });
+
+// mobile: drawer + back button + theme toggle
+const appEl = document.getElementById('app');
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const dark = cur ? cur === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
+  const mt = $('#mTheme'); if (mt) mt.textContent = dark ? '◑' : '◐';
+}
+$('#mHamb').onclick = () => appEl.classList.toggle('sidebar-open');
+$('#backdrop').onclick = () => appEl.classList.remove('sidebar-open');
+$('#mTheme').onclick = toggleTheme;
+$('#mBack').onclick = () => appEl.classList.remove('detail-open');
+['#filters', '#tags', '#colls'].forEach((sel) => { const el = $(sel); if (el) el.addEventListener('click', () => appEl.classList.remove('sidebar-open')); });
 
 if (!new URLSearchParams(location.search).has('snapshot')) {
   const es = new EventSource('/api/events');
