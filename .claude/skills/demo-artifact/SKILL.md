@@ -98,6 +98,22 @@ push it to a GitHub Pages repo, or commit it as `app-name/index.html` in any Ver
 repo and it goes live on the next push. The point of the single-file rule is that the deploy
 step is never the hard part. Mention the path; don't run it unless asked.
 
+## Known contrast gaps in the shipped assets (verify before you trust them)
+
+Run `project-to-portfolio/scripts/check-render.mjs` over anything you build from these.
+Measured against WCAG AA on the assets as shipped:
+
+| Asset | Status |
+|---|---|
+| `standalone-light-scaffold.html` | **passes** at 390px and 1280px |
+| `standalone-dark-scaffold.html` | muted text `#555250` on `#0d0d0d` is 2.5:1; accent CTAs (white on `#7B61FF`) are 4.2:1 |
+| `hero-template.html` | the hot-pink accent is the issue: white on `#FF2D78` is 3.56:1, pink on bone is 3.14:1 |
+
+These are palette-level, not layout bugs — raising them means changing the accent colours,
+which is a brand decision rather than a fix. Decide deliberately: either darken the accent
+until it clears 4.5:1, or reserve the accent for large text only (3:1) and keep body copy on
+the neutral tokens. What you must not do is ship it unmeasured and assume it is fine.
+
 ## Honest limit
 The scaffolds raise the floor, not the ceiling. They give structure, tokens, and the offline
 guarantee. They can't supply copy that earns the layout, or the restraint to delete sections

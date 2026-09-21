@@ -286,6 +286,7 @@
       overflow: hidden;
       border-radius: 8px;
       background: #1c100c; /* fallback while image loads */
+      max-width: 100%;     /* never let aspect-ratio push past the container */
     }
     .photo-frame img {
       width: 100%;
@@ -499,6 +500,11 @@
       .feature {
         grid-template-columns: 1fr;
         direction: ltr !important;
+      }
+      /* min-height + aspect-ratio together force a width wider than the phone.
+         Drop the floor and let the ratio size it from the available width. */
+      .feature__photo {
+        min-height: 0;
       }
       .steps {
         grid-template-columns: 1fr;
