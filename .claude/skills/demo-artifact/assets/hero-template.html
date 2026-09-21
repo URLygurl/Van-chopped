@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[PRODUCT NAME] — Hero Template</title>
+
+  <!--
+  =============================================================
+  TYPOGRAPHIC HERO FORMULA — 5 RULES
+  A condensed-headline landing-page design system.
+  Clone this. Edit the copy. Ship it.
+  Everything in the <body> is FICTIONAL EXAMPLE COPY for a made-up product
+  called Meridian — replace every word of it before you ship anything.
+  =============================================================
+
+  RULE 1 — FULL-BLEED SECTIONS, NOT BOXED CARDS.
+  The section background fills 100vw. The inner container centers.
+  No max-width card with a rounded border sitting on a white page.
+  Everything lives inside a colored slab that runs wall-to-wall.
+
+  RULE 2 — CONDENSED EXTRABOLD HEADLINE, 64px MINIMUM, PERIOD PER LINE.
+  Font: Barlow Condensed, weight 800. Every headline line ends with a
+  period. This is not punctuation — it is a visual anchor that stops
+  the eye running off the right edge. The heavier the font, the more
+  the period matters. 80-100px is better than 64px on desktop.
+
+  RULE 3 — EXACTLY THREE COLORS IN THE HEADLINE, ONE PER LINE.
+  Line 1 → --text-primary  (bone/off-white): the subject.
+  Line 2 → --hot-pink      (electric pink):  the tension/hook.
+  Line 3 → --yellow        (bright yellow):  the outcome/reward.
+  Never mix colors within a single line. Never use a fourth color.
+
+  RULE 4 — WARM NEAR-BLACK OR BONE/CREAM BACKGROUND. NEVER PURE.
+  Dark hero: #0d0908 (warm near-black). Add a radial vignette for depth.
+  Light sections: #f5f0e8 (bone/cream). Feels like paper, not a hospital.
+  Pure black (#000) reads cold. Pure white (#fff) reads unfinished.
+
+  RULE 5 — ONE WORD IN ACCENT COLOR PER SECTION, EVERYTHING ELSE NEUTRAL.
+  In body copy, exactly one word or phrase per section gets the pink
+  treatment. The ratio 1:many is what makes it pop. Accentuating every
+  other word means zero words are accented.
+
+  HEADLINE FORMULA:
+    "ONE [NOUN]."       ← the thing you built
+    "[NUM] [NOUNS]."    ← the scale/scope
+    "[OUTCOME]."        ← what they get
+
+  Examples:
+    "ONE SYSTEM. FORTY CLIENTS. ZERO DRIFT."       → an agency tool
+    "ONE DASHBOARD. EVERY GUEST. FULLY AUTOMATED." → a hospitality app
+    "ONE AUDIT. SIX SEAMS. SHIPPED TOMORROW."      → a consulting offer
+
+  CHIP LABEL:
+  Pink background, white uppercase text, 4px radius. Positioned
+  ABSOLUTE over the photo element — not below it as a caption.
+  The label is part of the image composition. It calls out what
+  the photo shows without interrupting reading flow below.
+
+  CTA BUTTON:
+  Pill shape (border-radius 100px). One icon prefix (inline SVG).
+  Hot-pink fill on primary. Bone outline on secondary.
+  =============================================================
+  -->
+
+  <!-- NO WEBFONT LINK — deliberate. A CDN <link> breaks the offline guarantee
+       silently: the page still renders, just in the wrong face. The stacks below
+       fall through to condensed system faces. Want the real Barlow Condensed?
+       Embed it as a base64 @font-face here. Never as a link. -->
+
+  <style>
+    /* ── TOKEN LAYER ────────────────────────────────────────────────────────── */
+    :root {
+      --bg-dark:       #0d0908;   /* warm near-black — Rule 4 */
+      --bg-bone:       #f5f0e8;   /* warm cream      — Rule 4 */
+      --bg-pink-slab:  #ff2d78;   /* full-bleed CTA section */
+      --text-primary:  #f5f0e8;   /* Rule 3, Line 1 */
+      --hot-pink:      #ff2d78;   /* Rule 3, Line 2 + chips + accent */
+      --yellow:        #ffe600;   /* Rule 3, Line 3 */
+      --text-bone-dim: rgba(245, 240, 232, 0.55); /* muted secondary on dark */
+      --text-dark:     #1a120f;   /* body text on bone sections */
+      --text-dark-dim: #6b5a52;   /* muted secondary on bone sections */
+
+      --font-headline: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
+      --font-body:     'Barlow', system-ui, -apple-system, sans-serif;
+
+      --headline-size: clamp(64px, 9vw, 108px);
+      --headline-lh:   0.91;
+      --headline-ls:   -0.025em;
+
+      --container:     1120px;
+      --gutter:        clamp(24px, 5vw, 80px);
+
+      --radius-chip:   4px;
+      --radius-pill:   100px;
+    }
+
+    /* ── RESET ──────────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 17px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+
+    /* ── LAYOUT UTILITIES ───────────────────────────────────────────────────── */
+    .container {
+      max-width: var(--container);
+      margin-inline: auto;
+      padding-inline: var(--gutter);
+    }
+
+    /* Full-bleed section — Rule 1 */
+    .section {
+      width: 100%;
+      padding-block: clamp(64px, 10vw, 120px);
+    }
+    .section--dark   { background: var(--bg-dark); }
+    .section--bone   { background: var(--bg-bone); color: var(--text-dark); }
+    .section--pink   { background: var(--bg-pink-slab); color: #fff; }
+
+    /* Radial vignette on dark sections — Rule 4 */
+    .section--vignette {
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%,
+          #1c100c 0%,
+          var(--bg-dark) 70%);
+    }
+
+    /* ── NAVIGATION ─────────────────────────────────────────────────────────── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 9, 8, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(245, 240, 232, 0.06);
+    }
+    .nav__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-block: 18px;
+    }
+    .nav__logo {
+      font-family: var(--font-headline);
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+    .nav__logo span { color: var(--hot-pink); }
+    .nav__links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav__links a {
+      color: var(--text-bone-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .nav__links a:hover { color: var(--text-primary); }
+
+    /* ── HEADLINE — 3-LINE FORMULA ──────────────────────────────────────────── */
+    .headline {
+      font-family: var(--font-headline);
+      font-weight: 800;
+      font-size: var(--headline-size);
+      line-height: var(--headline-lh);
+      letter-spacing: var(--headline-ls);
+      text-transform: uppercase;
+    }
+    /* One per line, Rule 3 */
+    .headline__line-1 { color: var(--text-primary); display: block; }
+    .headline__line-2 { color: var(--hot-pink);     display: block; }
+    .headline__line-3 { color: var(--yellow);        display: block; }
+
+    /* ── HERO SECTION ───────────────────────────────────────────────────────── */
+    .hero {
+      padding-block: clamp(80px, 12vw, 160px) clamp(64px, 10vw, 120px);
+    }
+    .hero__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 28px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--hot-pink);
+    }
+    .hero__eyebrow::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--hot-pink);
+      border-radius: 2px;
+    }
+    .hero__sub {
+      margin-top: 32px;
+      max-width: 52ch;
+      font-size: clamp(16px, 2vw, 19px);
+      line-height: 1.65;
+      color: var(--text-bone-dim);
+    }
+    /* Rule 5 — one word in accent */
+    .hero__sub .accent { color: var(--hot-pink); font-weight: 600; }
+
+    .hero__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 48px;
+    }
+
+    /* ── BUTTONS — PILL + ICON PREFIX ───────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+    .btn--primary {
+      background: var(--hot-pink);
+      color: #fff;
+      border-color: var(--hot-pink);
+    }
+    .btn--primary:hover {
+      background: #e0245e;
+      border-color: #e0245e;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(255, 45, 120, 0.35);
+    }
+    .btn--outline {
+      background: transparent;
+      color: var(--text-primary);
+      border-color: rgba(245, 240, 232, 0.25);
+    }
+    .btn--outline:hover {
+      border-color: var(--text-primary);
+      background: rgba(245, 240, 232, 0.06);
+    }
+    .btn--dark-outline {
+      background: transparent;
+      color: var(--text-dark);
+      border-color: rgba(26, 18, 15, 0.3);
+    }
+    .btn--dark-outline:hover {
+      border-color: var(--text-dark);
+      background: rgba(26, 18, 15, 0.06);
+    }
+    .btn__icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    /* ── CHIP LABEL — OVERLAY COMPONENT ─────────────────────────────────────── */
+    /* Wrap a photo in .photo-frame, then put .chip inside it */
+    .photo-frame {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #1c100c; /* fallback while image loads */
+    }
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    /* Chip lives inside .photo-frame, absolutely positioned */
+    .chip {
+      position: absolute;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--hot-pink);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: var(--radius-chip);
+      line-height: 1;
+      /* Default: bottom-left of photo */
+      bottom: 16px;
+      left: 16px;
+    }
+    .chip--top-left  { top: 16px;    bottom: auto; left: 16px;  right: auto; }
+    .chip--top-right { top: 16px;    bottom: auto; right: 16px; left: auto;  }
+    .chip--bottom-right { bottom: 16px; left: auto; right: 16px; }
+    /* Chip dot indicator */
+    .chip__dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+
+    /* ── FEATURE SECTION — PHOTO LEFT, COPY RIGHT ────────────────────────────── */
+    .feature {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 6vw, 80px);
+      align-items: center;
+    }
+    .feature--reverse { direction: rtl; }
+    .feature--reverse > * { direction: ltr; }
+    .feature__photo {
+      aspect-ratio: 4 / 3;
+      min-height: 320px;
+    }
+    .feature__label {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--hot-pink);
+      margin-bottom: 16px;
+    }
+    .feature__heading {
+      font-family: var(--font-headline);
+      font-weight: 800;
+      font-size: clamp(36px, 4vw, 52px);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      color: var(--text-dark);
+      margin-bottom: 20px;
+    }
+    .feature__body {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text-dark-dim);
+      margin-bottom: 28px;
+    }
+    .feature__body .accent { color: var(--hot-pink); font-weight: 600; }
+
+    /* ── HOW IT WORKS — 3 COLUMN ─────────────────────────────────────────────── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+    .step__number {
+      font-family: var(--font-headline);
+      font-weight: 800;
+      font-size: 80px;
+      line-height: 0.85;
+      letter-spacing: -0.04em;
+      color: var(--hot-pink);
+      opacity: 0.2;
+      margin-bottom: 16px;
+    }
+    .step__title {
+      font-family: var(--font-headline);
+      font-weight: 800;
+      font-size: 28px;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+    .step__body {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--text-bone-dim);
+    }
+
+    /* ── SECTION HEADING UTILITY ─────────────────────────────────────────────── */
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .section-label--light { color: var(--hot-pink); }
+    .section-label--dark  { color: var(--hot-pink); }
+
+    .section-heading {
+      font-family: var(--font-headline);
+      font-weight: 800;
+      font-size: clamp(36px, 5vw, 64px);
+      line-height: 0.93;
+      letter-spacing: -0.025em;
+      text-transform: uppercase;
+    }
+    .section-heading--light { color: var(--text-primary); }
+    .section-heading--dark  { color: var(--text-dark); }
+
+    /* ── CTA SECTION — FULL-BLEED PINK ─────────────────────────────────────── */
+    .cta-block {
+      text-align: center;
+      max-width: 680px;
+      margin-inline: auto;
+    }
+    .cta-block .headline {
+      font-size: clamp(48px, 7vw, 88px);
+    }
+    .cta-block .headline__line-1 { color: #fff; }
+    .cta-block .headline__line-2 { color: var(--yellow); }
+    .cta-block .headline__line-3 { color: rgba(255,255,255,0.45); }
+    .cta-block__sub {
+      margin-top: 24px;
+      font-size: 17px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.6;
+    }
+    .cta-block__actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 40px;
+    }
+    .btn--white {
+      background: #fff;
+      color: var(--hot-pink);
+      border-color: #fff;
+    }
+    .btn--white:hover {
+      background: #ffe9f0;
+      border-color: #ffe9f0;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    .btn--pink-outline {
+      background: transparent;
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+    .btn--pink-outline:hover {
+      border-color: #fff;
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* ── FOOTER ──────────────────────────────────────────────────────────────── */
+    .footer {
+      background: var(--bg-dark);
+      border-top: 1px solid rgba(245, 240, 232, 0.06);
+      padding-block: 40px;
+    }
+    .footer__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer__copy {
+      font-size: 13px;
+      color: var(--text-bone-dim);
+    }
+    .footer__links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+    .footer__links a {
+      font-size: 13px;
+      color: var(--text-bone-dim);
+      text-decoration: none;
+    }
+    .footer__links a:hover { color: var(--text-primary); }
+
+    /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .feature {
+        grid-template-columns: 1fr;
+        direction: ltr !important;
+      }
+      .steps {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .nav__links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAVIGATION ────────────────────────────────────────────────────────── -->
+  <nav class="nav">
+    <div class="container nav__inner">
+      <a class="nav__logo" href="#">
+        PRODUCT<span>.</span>
+      </a>
+      <ul class="nav__links">
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#feature">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+      <a class="btn btn--primary" href="#cta">
+        <!-- Arrow icon prefix -->
+        <svg class="btn__icon" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 9h12M10 5l5 4-5 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Get started
+      </a>
+    </div>
+  </nav>
+
+  <!-- ── HERO — DARK BG + RADIAL VIGNETTE + 3-LINE HEADLINE ───────────────── -->
+  <!--
+    EDIT HERE:
+    • Replace "MERIDIAN" in the eyebrow with your product name
+    • Replace the 3 headline lines with your formula: ONE [noun] / [adj] [noun plural] / [outcome]
+    • Replace the subheadline copy
+    • Change the CTA button text
+    The periods at the end of each headline line are intentional — do not remove them.
+  -->
+  <section class="section section--dark section--vignette hero">
+    <div class="container">
+      <div class="hero__eyebrow">Meridian</div>
+
+      <h1 class="headline">
+        <span class="headline__line-1">ONE INBOX.</span>
+        <span class="headline__line-2">EVERY CLIENT.</span>
+        <span class="headline__line-3">NOTHING DROPPED.</span>
+      </h1>
+
+      <p class="hero__sub">
+        The follow-up engine that keeps every client conversation
+        <span class="accent">moving without you</span> — no reminders to set,
+        no threads to chase down on a Sunday night.
+      </p>
+
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#cta">
+          <svg class="btn__icon" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 9h12M10 5l5 4-5 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Start free pilot
+        </a>
+        <a class="btn btn--outline" href="#how">
+          See how it works
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURE — PHOTO LEFT WITH CHIP LABEL + COPY RIGHT ────────────────── -->
+  <!--
+    PHOTO: Replace the .photo-frame div's background gradient with an actual
+    <img src="your-photo.jpg"> inside .photo-frame.
+    The .chip stays inside .photo-frame as an absolute-positioned overlay.
+    NEVER put the chip below the image as a caption.
+  -->
+  <section class="section section--bone" id="feature">
+    <div class="container">
+      <div class="feature">
+
+        <!-- Photo side with chip overlay -->
+        <div class="photo-frame feature__photo">
+          <!--
+            Replace this placeholder div with your actual image:
+            <img src="your-product-screenshot.jpg" alt="Product in action">
+          -->
+          <div style="
+            width:100%; height:100%; min-height:320px;
+            background: linear-gradient(135deg, #1c100c 0%, #2d1a14 40%, #1a0f0b 100%);
+            display:flex; align-items:center; justify-content:center;
+          ">
+            <span style="
+              font-family: var(--font-headline); font-weight:800;
+              font-size:13px; letter-spacing:0.1em; text-transform:uppercase;
+              color:rgba(245,240,232,0.15);
+            ">YOUR PHOTO HERE</span>
+          </div>
+
+          <!-- Chip label: overlaid ON the photo, not below it — Rule: chip overlay -->
+          <div class="chip chip--bottom-left">
+            <span class="chip__dot"></span>
+            Live in 48 hours
+          </div>
+        </div>
+
+        <!-- Copy side -->
+        <div class="feature__copy">
+          <span class="feature__label">How it works</span>
+          <h2 class="feature__heading">
+            NOTHING SLIPS.<br>
+            NOBODY CHASES.
+          </h2>
+          <p class="feature__body">
+            Meridian reads every thread, spots the ones going cold, and drafts
+            <span class="accent">the exact follow-up</span> that restarts them.
+            You approve in one click. Clients think you never sleep.
+          </p>
+          <a class="btn btn--dark-outline" href="#cta">
+            <svg class="btn__icon" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 9h12M10 5l5 4-5 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            See the demo
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SECOND FEATURE — REVERSED (COPY LEFT, PHOTO RIGHT) ───────────────── -->
+  <section class="section section--bone">
+    <div class="container">
+      <div class="feature feature--reverse">
+
+        <div class="photo-frame feature__photo">
+          <div style="
+            width:100%; height:100%; min-height:320px;
+            background: linear-gradient(135deg, #0a2040 0%, #0d3366 40%, #0a1f3d 100%);
+            display:flex; align-items:center; justify-content:center;
+          ">
+            <span style="
+              font-family: var(--font-headline); font-weight:800;
+              font-size:13px; letter-spacing:0.1em; text-transform:uppercase;
+              color:rgba(245,240,232,0.15);
+            ">YOUR SCREENSHOT</span>
+          </div>
+          <div class="chip chip--top-right">
+            <span class="chip__dot"></span>
+            Draft ready
+          </div>
+        </div>
+
+        <div class="feature__copy">
+          <span class="feature__label">The engine</span>
+          <h2 class="feature__heading">
+            SIX MOVES.<br>
+            ONE MORNING.
+          </h2>
+          <p class="feature__body">
+            The pulse report lands at 7am: who to answer, who to nudge,
+            what's stalled, what's about to close.
+            <span class="accent">Six actions</span> drafted for you.
+            Approve them or ignore them. Your call, always.
+          </p>
+          <a class="btn btn--dark-outline" href="#cta">
+            <svg class="btn__icon" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 9h12M10 5l5 4-5 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Read a sample report
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS — 3-COLUMN STEPS ON DARK BG ─────────────────────────── -->
+  <section class="section section--dark section--vignette" id="how">
+    <div class="container">
+      <p class="section-label section-label--light">The process</p>
+      <h2 class="section-heading section-heading--light" style="margin-bottom: clamp(48px, 7vw, 80px);">
+        THREE STEPS.<br>DONE.
+      </h2>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step__number">01</div>
+          <h3 class="step__title">Connect your community.</h3>
+          <p class="step__body">
+            Point Meridian at your inbox. It reads the threads, maps your
+            contacts, and learns your voice from the replies you've already sent.
+            No templates. No scripts to fill in.
+          </p>
+        </div>
+        <div class="step">
+          <div class="step__number">02</div>
+          <h3 class="step__title">Get the daily pulse.</h3>
+          <p class="step__body">
+            Every morning: a prioritized list of who needs attention and a
+            drafted reply for each. You scan, approve, or skip. The whole
+            review takes under ten minutes.
+          </p>
+        </div>
+        <div class="step">
+          <div class="step__number">03</div>
+          <h3 class="step__title">Watch reply rates hold.</h3>
+          <p class="step__body">
+            Clients who feel answered stay. That's the whole thesis. Meridian
+            makes you look present even when you're heads-down building
+            the thing that pays the bills.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA — FULL-BLEED HOT PINK ─────────────────────────────────────────── -->
+  <!--
+    On the pink slab, adjust the 3-line headline:
+    Line 1 → white (the commitment)
+    Line 2 → yellow (the outcome)
+    Line 3 → white at low opacity (the stakes or time-limit)
+  -->
+  <section class="section section--pink" id="cta">
+    <div class="container">
+      <div class="cta-block">
+        <h2 class="headline cta-block__headline">
+          <span class="headline__line-1">ONE PILOT.</span>
+          <span class="headline__line-2">THIRTY DAYS.</span>
+          <span class="headline__line-3">FREE.</span>
+        </h2>
+        <p class="cta-block__sub">
+          Two accounts. No contract. We run Meridian on your inbox for a
+          month and you tell us whether it made a difference.
+        </p>
+        <div class="cta-block__actions">
+          <a class="btn btn--white" href="mailto:hello@example.com">
+            <svg class="btn__icon" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 9h12M10 5l5 4-5 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Apply for the pilot
+          </a>
+          <a class="btn btn--pink-outline" href="#how">
+            How it works first
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ──────────────────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="footer__copy">© 2026 Meridian. Example copy — replace before shipping.</p>
+      <ul class="footer__links">
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="mailto:hello@example.com">Contact</a></li>
+      </ul>
+    </div>
+  </footer>
+
+</body>
+</html>
