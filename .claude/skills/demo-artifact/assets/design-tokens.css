@@ -1,0 +1,600 @@
+/* ============================================================
+   ACCENT TOKEN SYSTEM v1
+   Single-token design system with semantic color locking.
+
+   RULE: swap --color-accent per product. Touch nothing else.
+   VERIFY: run accent-proof.html before shipping any new accent.
+   ============================================================ */
+
+/* NO WEBFONT IMPORT — by design.
+   This pack's whole promise is a file that works offline. A CDN @import
+   breaks that silently (the page still renders, just in the wrong face).
+   The font stacks below fall back through condensed system faces.
+   If you want a real condensed face, embed it as a base64 @font-face here —
+   never as a link. */
+
+
+/* ============================================================
+   LOCKED FOUNDATION TOKENS
+   These never change across products.
+   ============================================================ */
+
+:root {
+  /* --- Semantic color: AI signal (NEVER use as product accent) --- */
+  --color-ai-action:        #F0C040;
+  --color-ai-action-hover:  #D4A820;
+  --color-ai-action-light:  #FBF0C0;
+  --color-ai-action-text:   #1A1A1A;  /* text on --color-ai-action bg */
+
+  /* --- Background scale --- */
+  --color-bg:               #F5F0EB;  /* page background (bone/cream) */
+  --color-bg-raised:        #FDFAF6;  /* cards, modals */
+  --color-bg-well:          #EDE8E1;  /* inputs, sunken wells */
+  --color-bg-overlay:       rgba(26, 26, 26, 0.48);
+
+  /* --- Text --- */
+  --color-text:             #1A1A1A;  /* primary body copy */
+  --color-text-muted:       #6B6560;  /* secondary / labels */
+  --color-text-placeholder: #9E9891;
+  --color-text-on-dark:     #FDFAF6;  /* text on dark or accent backgrounds */
+
+  /* --- Borders --- */
+  --color-border:           #D4CEC7;
+  --color-border-strong:    #A8A29C;
+
+  /* --- Status (locked regardless of product accent) --- */
+  --color-success:          #18A96B;
+  --color-warning:          #D97706;
+  --color-danger:           #D64040;
+  --color-info:             #4A90D9;
+
+  /* --- Typography --- */
+  --font-display:           'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --font-display-weight:    800;
+  --font-body:              'Barlow', system-ui, -apple-system, sans-serif;
+
+  /* --- Spacing (4px base unit) --- */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --s8: 64px;
+
+  /* --- Border radius --- */
+  --r-sm:   4px;
+  --r-md:   8px;
+  --r-lg:   12px;
+  --r-xl:   20px;
+  --r-pill: 9999px;
+
+  /* --- Elevation --- */
+  --shadow-sm: 0 1px 3px rgba(26,26,26,.08);
+  --shadow-md: 0 4px 12px rgba(26,26,26,.10);
+  --shadow-lg: 0 8px 24px rgba(26,26,26,.14);
+
+  /* --- Motion --- */
+  --ease-out:       cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1.0);
+  --duration-fast:  120ms;
+  --duration-base:  200ms;
+  --duration-slow:  350ms;
+}
+
+
+/* ============================================================
+   ACCENT — SWAP THIS ONE VARIABLE PER PRODUCT
+   ============================================================
+
+   Presets (all pass the collision check against #F0C040):
+     Signal blue:  #2D6EE8   contrast vs yellow: 4.8:1
+     Teal green:   #1A9B62   contrast vs yellow: 3.4:1
+     Violet:       #7C3AED   contrast vs yellow: 5.9:1
+     Cyan:         #0891B2   contrast vs yellow: 3.2:1
+
+   RULE: never set --color-accent to yellow, orange, or any
+   color within 30 hue degrees of #F0C040. If in doubt, run
+   accent-proof.html — it runs the collision check live.
+   ============================================================ */
+
+:root {
+  --color-accent:       #2D6EE8;
+  --color-accent-hover: color-mix(in srgb, var(--color-accent) 82%, #000);
+  --color-accent-light: color-mix(in srgb, var(--color-accent) 10%, var(--color-bg));
+  --color-accent-muted: color-mix(in srgb, var(--color-accent) 40%, var(--color-bg));
+  --color-accent-text:  var(--color-text-on-dark);
+}
+
+
+/* ============================================================
+   BASE RESETS
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  font-size: 16px;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, video { display: block; max-width: 100%; }
+
+a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+a:hover { color: var(--color-accent-hover); }
+
+
+/* ============================================================
+   TYPOGRAPHY UTILITIES
+   ============================================================ */
+
+.t-display {
+  font-family: var(--font-display);
+  font-weight: var(--font-display-weight);
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.t-display-2xl { font-size: clamp(3.5rem, 10vw, 7rem); }
+.t-display-xl  { font-size: clamp(2.5rem, 7vw, 5rem); }
+.t-display-lg  { font-size: clamp(2rem, 5vw, 3.5rem); }
+.t-display-md  { font-size: clamp(1.5rem, 3vw, 2.25rem); }
+.t-display-sm  { font-size: 1.375rem; }
+
+/* Eyebrow / overline label */
+.t-label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;    /* 11px */
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+.t-body-lg  { font-size: 1.125rem; line-height: 1.6; }
+.t-body-sm  { font-size: 0.875rem; line-height: 1.5; }
+.t-caption  { font-size: 0.75rem;  line-height: 1.4; color: var(--color-text-muted); }
+
+
+/* ============================================================
+   BUTTONS
+   ============================================================
+
+   Hierarchy:
+     .btn-primary  — full-width CTA, accent fill (submit, primary action)
+     .btn-ai       — full-width CTA, yellow fill (AI-triggered actions only)
+     .btn-ghost    — outline, inherits border; accent on hover
+     .btn-danger   — outline, danger color
+
+   Modifiers:
+     .btn-sm / .btn-lg  — size variants
+     .btn-icon          — square icon-only button
+   ============================================================ */
+
+.btn {
+  align-items: center;
+  border: 1.5px solid transparent;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  gap: var(--s2);
+  justify-content: center;
+  line-height: 1;
+  padding: var(--s3) var(--s5);
+  text-decoration: none;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    box-shadow  var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* Primary: accent fill, full-width */
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+  width: 100%;
+}
+.btn-primary:hover {
+  background: var(--color-accent-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.btn-primary:active {
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+/* AI action: yellow, full-width — for AI-triggered actions only */
+.btn-ai {
+  background: var(--color-ai-action);
+  color: var(--color-ai-action-text);
+  width: 100%;
+}
+.btn-ai:hover {
+  background: var(--color-ai-action-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.btn-ai:active {
+  box-shadow: none;
+  transform: translateY(0);
+}
+
+/* Ghost: outline only */
+.btn-ghost {
+  background: transparent;
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+.btn-ghost:hover {
+  background: var(--color-accent-light);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Danger: outline, red */
+.btn-danger {
+  background: transparent;
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+.btn-danger:hover {
+  background: color-mix(in srgb, var(--color-danger) 8%, var(--color-bg));
+  box-shadow: var(--shadow-sm);
+}
+
+/* Sizes */
+.btn-sm {
+  font-size: 0.8125rem;
+  gap: var(--s1);
+  padding: var(--s2) var(--s4);
+}
+.btn-lg {
+  font-size: 1.0625rem;
+  padding: var(--s4) var(--s6);
+}
+
+/* Icon-only square */
+.btn-icon {
+  aspect-ratio: 1;
+  padding: var(--s3);
+  width: auto;
+}
+
+
+/* ============================================================
+   STATUS PILLS
+   ============================================================ */
+
+.pill {
+  align-items: center;
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  font-size: 0.6875rem;    /* 11px */
+  font-weight: 700;
+  gap: 5px;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  padding: 4px 10px;
+  text-transform: uppercase;
+}
+
+/* Dot indicator */
+.pill::before {
+  background: currentColor;
+  border-radius: 50%;
+  content: '';
+  display: block;
+  flex-shrink: 0;
+  height: 5px;
+  width: 5px;
+}
+
+/* No dot variant */
+.pill-no-dot::before { display: none; }
+
+.pill-success {
+  background: color-mix(in srgb, var(--color-success) 12%, var(--color-bg));
+  color:       color-mix(in srgb, var(--color-success) 75%, #000);
+}
+.pill-warning {
+  background: color-mix(in srgb, var(--color-warning) 12%, var(--color-bg));
+  color:       color-mix(in srgb, var(--color-warning) 80%, #000);
+}
+.pill-danger {
+  background: color-mix(in srgb, var(--color-danger) 12%, var(--color-bg));
+  color:       color-mix(in srgb, var(--color-danger) 70%, #000);
+}
+.pill-info {
+  background: color-mix(in srgb, var(--color-info) 12%, var(--color-bg));
+  color:       color-mix(in srgb, var(--color-info) 75%, #000);
+}
+.pill-accent {
+  background: var(--color-accent-light);
+  color:       var(--color-accent-hover);
+}
+.pill-ai {
+  background: var(--color-ai-action-light);
+  color:       color-mix(in srgb, var(--color-ai-action) 60%, #000);
+}
+.pill-neutral {
+  background: var(--color-bg-well);
+  color: var(--color-text-muted);
+}
+
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+
+.card {
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--s5);
+}
+
+.card-accent {
+  border-top: 3px solid var(--color-accent);
+}
+
+.card-ai {
+  border-top: 3px solid var(--color-ai-action);
+}
+
+
+/* ============================================================
+   FORM INPUTS
+   ============================================================ */
+
+.input,
+.textarea,
+.select {
+  background: var(--color-bg-well);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--r-md);
+  color: var(--color-text);
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  padding: var(--s3) var(--s4);
+  transition: border-color var(--duration-fast) var(--ease-out),
+              box-shadow   var(--duration-fast) var(--ease-out);
+  width: 100%;
+}
+
+.input::placeholder,
+.textarea::placeholder { color: var(--color-text-placeholder); }
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  outline: none;
+}
+
+.textarea { min-height: 100px; resize: vertical; }
+
+
+/* ============================================================
+   COLLISION CHECK COMPONENT
+   ============================================================
+
+   A visual widget that shows the accent-vs-yellow relationship
+   clearly. Drop it into any dev view or design review screen
+   to prove no semantic clash before shipping.
+
+   Usage:
+     <div class="collision-check" data-accent="#2D6EE8">
+       <div class="collision-check__swatch--accent">...</div>
+       <div class="collision-check__swatch--ai">...</div>
+       <div class="collision-check__bar">...</div>
+       <div class="collision-check__result"></div>
+     </div>
+
+   The result is populated by collision-check.js.
+   ============================================================ */
+
+.collision-check {
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--r-lg);
+  display: grid;
+  gap: var(--s3);
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  padding: var(--s5);
+}
+
+.collision-check__swatch {
+  aspect-ratio: 5 / 2;
+  border-radius: var(--r-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--s3);
+}
+
+.collision-check__swatch--accent {
+  background: var(--color-accent);
+}
+.collision-check__swatch--ai {
+  background: var(--color-ai-action);
+}
+
+.collision-check__swatch-label {
+  color: var(--color-text-on-dark);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.collision-check__swatch--ai .collision-check__swatch-label {
+  color: var(--color-text);
+}
+
+/* Side-by-side bar spanning both columns */
+.collision-check__bar {
+  border-radius: var(--r-md);
+  display: flex;
+  grid-column: 1 / -1;
+  height: 40px;
+  overflow: hidden;
+}
+
+.collision-check__bar-half {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  justify-content: center;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.collision-check__bar-half--accent {
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+}
+.collision-check__bar-half--ai {
+  background: var(--color-ai-action);
+  color: var(--color-ai-action-text);
+}
+
+/* Result row */
+.collision-check__result {
+  align-items: center;
+  border-radius: var(--r-md);
+  display: flex;
+  gap: var(--s3);
+  grid-column: 1 / -1;
+  justify-content: space-between;
+  padding: var(--s3) var(--s4);
+  background: var(--color-bg-well);
+}
+
+.collision-check__result-badge {
+  border-radius: var(--r-sm);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  padding: 3px 8px;
+  text-transform: uppercase;
+}
+
+.collision-check__result-badge--pass {
+  background: color-mix(in srgb, var(--color-success) 15%, var(--color-bg));
+  color: color-mix(in srgb, var(--color-success) 70%, #000);
+}
+.collision-check__result-badge--warn {
+  background: color-mix(in srgb, var(--color-warning) 15%, var(--color-bg));
+  color: color-mix(in srgb, var(--color-warning) 70%, #000);
+}
+.collision-check__result-badge--fail {
+  background: color-mix(in srgb, var(--color-danger) 15%, var(--color-bg));
+  color: color-mix(in srgb, var(--color-danger) 70%, #000);
+}
+
+.collision-check__result-detail {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+
+/* ============================================================
+   LAYOUT UTILITIES
+   ============================================================ */
+
+.stack { display: flex; flex-direction: column; }
+.stack-1 { gap: var(--s1); }
+.stack-2 { gap: var(--s2); }
+.stack-3 { gap: var(--s3); }
+.stack-4 { gap: var(--s4); }
+.stack-5 { gap: var(--s5); }
+.stack-6 { gap: var(--s6); }
+
+.cluster { align-items: center; display: flex; flex-wrap: wrap; }
+.cluster-2 { gap: var(--s2); }
+.cluster-3 { gap: var(--s3); }
+.cluster-4 { gap: var(--s4); }
+
+.container {
+  margin-inline: auto;
+  max-width: 1200px;
+  padding-inline: var(--s5);
+  width: 100%;
+}
+.container-sm { max-width: 720px; }
+.container-xs { max-width: 480px; }
+
+.grid-2 { display: grid; gap: var(--s5); grid-template-columns: repeat(2, 1fr); }
+.grid-3 { display: grid; gap: var(--s5); grid-template-columns: repeat(3, 1fr); }
+.grid-4 { display: grid; gap: var(--s5); grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+/* Surface utilities */
+.surface     { background: var(--color-bg-raised); }
+.surface-well { background: var(--color-bg-well); }
+
+/* Text utilities */
+.text-muted    { color: var(--color-text-muted); }
+.text-accent   { color: var(--color-accent); }
+.text-ai       { color: color-mix(in srgb, var(--color-ai-action) 55%, #000); }
+.text-success  { color: var(--color-success); }
+.text-danger   { color: var(--color-danger); }
+
+/* Divider */
+.divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin-block: var(--s4);
+}

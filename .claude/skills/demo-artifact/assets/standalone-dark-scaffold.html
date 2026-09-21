@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<!--
+  ╔═══════════════════════════════════════════════════════════════════╗
+  ║  STANDALONE DARK SCAFFOLD  —  kinetic hero / pitch / demo         ║
+  ╠═══════════════════════════════════════════════════════════════════╣
+  ║  USE THIS for: product demos, pitch docs, landing-page exports,   ║
+  ║  capability showcases, or anything you hand to a potential buyer. ║
+  ║  USE THE LIGHT SCAFFOLD for: audits, reports, data deliverables.  ║
+  ║                                                                   ║
+  ║  NAMING CONVENTION                                                ║
+  ║    product-name-demo-v1.html    (demos)                           ║
+  ║    product-name-pitch-v1.html   (pitch docs)                      ║
+  ║    product-name-brief-v1.html   (briefs / PRDs)                   ║
+  ║    product-name-tools-v1.html   (tool showcases)                  ║
+  ║    Examples:                                                      ║
+  ║      meridian-demo-v1.html                                        ║
+  ║      harbor-pitch-v1.html                                         ║
+  ║      orbit-brief-v2.html                                          ║
+  ║                                                                   ║
+  ║  LOCALSTORAGE KEY PATTERN                                         ║
+  ║    [product-slug]:[key]                                           ║
+  ║    Examples:                                                      ║
+  ║      meridian-demo:currentSection                                 ║
+  ║      harbor-pitch:theme                                           ║
+  ║      orbit-brief:scrollY                                          ║
+  ║    ─────────────────────────────────────────────────────────────  ║
+  ║    Set PRODUCT_SLUG in the <script> block. One string change      ║
+  ║    per fork. Everything else keys off it automatically.           ║
+  ║                                                                   ║
+  ║  THEME VARS  (dark → light swap reference)                        ║
+  ║    --bg:          #080808  →  #F7F4EE                             ║
+  ║    --surface:     #111111  →  #FFFFFF                             ║
+  ║    --surface-2:   #181818  →  #F0ECE4                             ║
+  ║    --surface-3:   #1F1F1F  →  #E8E3DA                             ║
+  ║    --border:      #262626  →  #E5DDD0                             ║
+  ║    --text:        #F0EDE8  →  #1A1A1A                             ║
+  ║    --text-muted:  #888480  →  #6B6560                             ║
+  ║    --accent:      #7B61FF  →  #2D5BE3                             ║
+  ║    --accent-2:    #FF6B35  →  #C04A12                             ║
+  ║    --glow:        rgba(123,97,255,.18)  →  transparent            ║
+  ║                                                                   ║
+  ║  KINETIC ELEMENTS                                                 ║
+  ║    .hero-bg         — animated gradient mesh (CSS keyframes)      ║
+  ║    .kinetic-text    — shimmer text-gradient animation             ║
+  ║    .pulse-dot       — breathing status indicator                  ║
+  ║    .reveal          — intersection-observer fade-in on scroll     ║
+  ║    Disable all: add data-no-motion="true" to <html>               ║
+  ║                                                                   ║
+  ║  ZERO EXTERNAL DEPENDENCIES                                       ║
+  ║    No CDN, no fonts, no analytics, no images. Offline forever.    ║
+  ╚═══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Name — Demo</title>
+  <style>
+    /* ── Design tokens ───────────────────────────────────────────── */
+    :root {
+      --bg:        #080808;
+      --surface:   #111111;
+      --surface-2: #181818;
+      --surface-3: #1F1F1F;
+      --border:    #262626;
+      --text:      #F0EDE8;
+      --text-muted:#888480;
+      --text-dim:  #555250;
+      --accent:    #7B61FF;
+      --accent-2:  #FF6B35;
+      --accent-3:  #2DD4BF;
+      --glow:      rgba(123, 97, 255, .18);
+      --glow-2:    rgba(255, 107, 53, .14);
+      --success:   #2DD4BF;
+      --warning:   #F59E0B;
+      --danger:    #F87171;
+      --radius:    8px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+      --nav-h:     52px;
+      --max-w:     1100px;
+      --content-w: 680px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+              Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo,
+                   Consolas, monospace;
+      --font-display: "SF Pro Display", "Helvetica Neue", system-ui,
+                      Helvetica, Arial, sans-serif;
+    }
+
+    /* light mode override */
+    html.light {
+      --bg:        #F7F4EE;
+      --surface:   #FFFFFF;
+      --surface-2: #F0ECE4;
+      --surface-3: #E8E3DA;
+      --border:    #E5DDD0;
+      --text:      #1A1A1A;
+      --text-muted:#6B6560;
+      --text-dim:  #A09890;
+      --accent:    #2D5BE3;
+      --accent-2:  #C04A12;
+      --accent-3:  #0A8F7F;
+      --glow:      transparent;
+      --glow-2:    transparent;
+    }
+
+    /* ── Reset ───────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Nav bar ─────────────────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: rgba(8, 8, 8, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+      gap: 16px;
+    }
+    html.light .nav {
+      background: rgba(247, 244, 238, 0.88);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .nav-logo {
+      width: 30px; height: 30px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      flex-shrink: 0;
+    }
+    .nav-wordmark {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .nav-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    /* Section tabs in nav */
+    .nav-tabs {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+      flex: 1;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .nav-tab {
+      padding: 5px 14px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .nav-tab:hover { background: var(--surface-2); color: var(--text); }
+    .nav-tab.active {
+      background: var(--surface-3);
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      height: 30px;
+      padding: 0 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--surface-2);
+      color: var(--text-muted);
+      transition: background 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+    .nav-btn:hover { background: var(--surface-3); color: var(--text); }
+    .nav-btn-accent {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .nav-btn-accent:hover { opacity: 0.88; background: var(--accent); color: #fff; }
+
+    /* ── Kinetic animations ──────────────────────────────────────── */
+    @keyframes gradientShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.85); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes meshFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%       { transform: translate(30px, -20px) scale(1.05); }
+      66%       { transform: translate(-20px, 15px) scale(0.97); }
+    }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce),
+           html[data-no-motion="true"] * {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    /* ── Hero section ────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(var(--nav-h) + 60px) 24px 80px;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    /* animated background mesh */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .hero-bg-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+    }
+    .hero-bg-blob:nth-child(1) {
+      width: 600px; height: 600px;
+      top: -10%; left: -5%;
+      background: radial-gradient(circle, rgba(123, 97, 255, 0.15), transparent 70%);
+      animation: meshFloat 18s ease-in-out infinite;
+    }
+    .hero-bg-blob:nth-child(2) {
+      width: 500px; height: 500px;
+      bottom: -10%; right: -5%;
+      background: radial-gradient(circle, rgba(255, 107, 53, 0.12), transparent 70%);
+      animation: meshFloat 22s ease-in-out infinite reverse;
+    }
+    .hero-bg-blob:nth-child(3) {
+      width: 400px; height: 400px;
+      top: 40%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(45, 212, 191, 0.08), transparent 70%);
+      animation: meshFloat 26s ease-in-out infinite 4s;
+    }
+    html.light .hero-bg-blob { opacity: 0.4; }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 28px;
+      animation: fadeUp 0.6s ease both 0.1s;
+    }
+    .pulse-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--accent-3);
+      animation: pulse 2.4s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 8vw, 80px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s ease both 0.2s;
+    }
+    /* kinetic shimmer on heading */
+    .kinetic-text {
+      background: linear-gradient(
+        90deg,
+        var(--text) 0%,
+        var(--text) 35%,
+        var(--accent) 50%,
+        var(--accent-2) 60%,
+        var(--text) 75%,
+        var(--text) 100%
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
+    }
+
+    .hero-sub {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+      animation: fadeUp 0.6s ease both 0.3s;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s ease both 0.4s;
+    }
+    .btn {
+      height: 46px;
+      padding: 0 24px;
+      border-radius: var(--radius);
+      border: 1px solid transparent;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: opacity 0.15s, transform 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn-accent {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 0 1px var(--accent), 0 8px 24px var(--glow);
+    }
+    .btn-accent:hover { opacity: 0.88; }
+    .btn-ghost {
+      background: var(--surface-2);
+      color: var(--text);
+      border-color: var(--border);
+    }
+    .btn-ghost:hover { background: var(--surface-3); }
+
+    /* hero scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      animation: fadeUp 0.6s ease both 0.7s;
+    }
+    .scroll-arrow {
+      width: 20px;
+      height: 20px;
+      border-right: 1px solid var(--text-dim);
+      border-bottom: 1px solid var(--text-dim);
+      transform: rotate(45deg);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    /* ── Page wrapper (below hero) ───────────────────────────────── */
+    .page-body {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 24px 120px;
+    }
+
+    /* section blocks (reveal on scroll) */
+    .block {
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+    }
+    .block:first-child { border-top: none; }
+
+    /* reveal animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Section headers ─────────────────────────────────────────── */
+    .block-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .block-title {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    .block-desc {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.65;
+      margin-bottom: 40px;
+    }
+
+    /* ── Cards ───────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 8px 32px var(--glow);
+    }
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    .card-body {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* feature card — accent left border */
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+      padding: 22px 24px;
+    }
+
+    /* ── Grids ───────────────────────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+    /* ── Stat blocks ─────────────────────────────────────────────── */
+    .stat-row {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .stat-cell {
+      flex: 1;
+      padding: 24px 20px;
+      border-right: 1px solid var(--border);
+      text-align: center;
+    }
+    .stat-cell:last-child { border-right: none; }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-num.accent { color: var(--accent); }
+    .stat-num.accent-2 { color: var(--accent-2); }
+    .stat-num.accent-3 { color: var(--accent-3); }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .stat-context {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ── Badges ──────────────────────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      border: 1px solid transparent;
+    }
+    .badge-accent  { background: rgba(123,97,255,.15); color: var(--accent); border-color: rgba(123,97,255,.25); }
+    .badge-success { background: rgba(45,212,191,.12); color: var(--success); border-color: rgba(45,212,191,.2); }
+    .badge-warning { background: rgba(245,158,11,.12); color: var(--warning); border-color: rgba(245,158,11,.2); }
+    .badge-danger  { background: rgba(248,113,113,.12); color: var(--danger); border-color: rgba(248,113,113,.2); }
+    .badge-neutral { background: var(--surface-2); color: var(--text-muted); border-color: var(--border); }
+    html.light .badge-accent  { background: rgba(45,91,227,.1); border-color: rgba(45,91,227,.2); }
+    html.light .badge-success { background: rgba(10,143,127,.1); border-color: rgba(10,143,127,.2); }
+
+    /* ── Code block ──────────────────────────────────────────────── */
+    .code-block {
+      background: #0D0D0D;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    html.light .code-block { background: #1A1A1A; }
+    .code-block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .code-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .code-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .code-dot:nth-child(1) { background: #FF5F57; }
+    .code-dot:nth-child(2) { background: #FEBC2E; }
+    .code-dot:nth-child(3) { background: #28C840; }
+    .code-filename {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .code-block pre {
+      padding: 20px 22px;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      line-height: 1.75;
+      color: #E8E4DC;
+      overflow-x: auto;
+      margin: 0;
+      background: transparent;
+      border: none;
+    }
+    .code-kw   { color: #7B61FF; }
+    .code-str  { color: #2DD4BF; }
+    .code-num  { color: #FF6B35; }
+    .code-cmt  { color: #555250; font-style: italic; }
+    .code-fn   { color: #F0EDE8; }
+
+    /* ── Timeline / process steps ────────────────────────────────── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 0 20px;
+      position: relative;
+    }
+    .timeline-item:not(:last-child) .timeline-line {
+      position: absolute;
+      left: 25px;
+      top: 44px;
+      bottom: -8px;
+      width: 1px;
+      background: var(--border);
+    }
+    .timeline-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .timeline-body {
+      padding: 10px 0 32px;
+    }
+    .timeline-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .timeline-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ── Callout ─────────────────────────────────────────────────── */
+    .callout {
+      border: 1px solid rgba(123,97,255,.25);
+      background: rgba(123,97,255,.06);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .callout strong { color: var(--accent); }
+
+    /* ── Pricing card ────────────────────────────────────────────── */
+    .pricing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .pricing-card.featured {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 16px 48px var(--glow);
+    }
+    .pricing-plan {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+    .pricing-price {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .pricing-period {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .pricing-features {
+      list-style: none;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .pricing-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .pricing-features li::before {
+      content: "✓";
+      color: var(--accent-3);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── CTA section ─────────────────────────────────────────────── */
+    .cta-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 60px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-block::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, var(--glow), transparent 60%);
+      pointer-events: none;
+    }
+    .cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 4vw, 38px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .cta-sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 440px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    /* ── Divider ─────────────────────────────────────────────────── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+    /* ── Footer ──────────────────────────────────────────────────── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-text {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .footer-links {
+      display: flex;
+      gap: 16px;
+    }
+    .footer-links a {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .footer-links a:hover { color: var(--text); }
+
+    /* ── Toast ───────────────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--surface-3);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 200;
+      max-width: 300px;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Print ───────────────────────────────────────────────────── */
+    @media print {
+      .nav, .scroll-hint, .toast, .hero-actions { display: none !important; }
+      .hero { min-height: auto; padding-top: 40px; }
+      .hero-bg { display: none; }
+      body { background: white; color: black; }
+    }
+
+    /* ── Mobile ──────────────────────────────────────────────────── */
+    @media (max-width: 767px) {
+      .nav-tabs { display: none; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .stat-row { flex-direction: column; }
+      .stat-cell { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat-cell:last-child { border-bottom: none; }
+      .page-body { padding: 0 16px 80px; }
+      .block { padding: 56px 0; }
+      .cta-block { padding: 40px 24px; }
+      .hero-title { font-size: 36px; }
+    }
+    @media (max-width: 480px) {
+      .nav-wordmark { max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .nav-tag { display: none; }
+      .hero-actions .btn { width: 100%; justify-content: center; }
+      .hero-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Nav ──────────────────────────────────────────────────── -->
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-logo" id="navLogo">PN</div>
+      <div class="nav-wordmark" id="navWordmark">Product Name</div>
+      <div class="nav-tag" id="navTag">Demo</div>
+    </div>
+
+    <div class="nav-tabs" id="navTabs">
+      <!-- auto-populated by JS -->
+    </div>
+
+    <div class="nav-actions">
+      <button class="nav-btn" onclick="toggleTheme()" id="themeBtn" title="Toggle theme">◑</button>
+      <button class="nav-btn nav-btn-accent" onclick="handleCTA()" id="ctaBtn">Get access</button>
+    </div>
+  </nav>
+
+  <!-- ── Hero ─────────────────────────────────────────────────── -->
+  <section class="hero" id="s-hero" data-title="Hero">
+    <div class="hero-bg">
+      <div class="hero-bg-blob"></div>
+      <div class="hero-bg-blob"></div>
+      <div class="hero-bg-blob"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="pulse-dot"></span>
+        <!-- Replace: status line or category label -->
+        Category · Version 1.0
+      </div>
+
+      <h1 class="hero-title">
+        <!-- Replace: your headline. Two to five words, punchy. -->
+        <span class="kinetic-text">The problem</span><br>
+        you already know
+      </h1>
+
+      <p class="hero-sub">
+        <!-- Replace: one sentence on what this does and for whom. -->
+        A short description of what the product does for the specific person
+        standing in front of you. No jargon.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn btn-accent" onclick="scrollToSection('s-features')">
+          See how it works
+          <span>→</span>
+        </button>
+        <button class="btn btn-ghost" onclick="scrollToSection('s-demo')">
+          Watch demo
+        </button>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ── Page body ─────────────────────────────────────────────── -->
+  <div class="page-body">
+
+    <!-- ══ SECTION: Stats ══════════════════════════════════════ -->
+    <div class="block reveal" id="s-stats" data-title="Stats">
+      <div class="stat-row" style="margin-bottom:16px">
+        <div class="stat-cell">
+          <div class="stat-num accent">94%</div>
+          <div class="stat-label">Metric one</div>
+          <div class="stat-context">What it measures</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num accent-2">€12k</div>
+          <div class="stat-label">Metric two</div>
+          <div class="stat-context">What it measures</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num accent-3">31</div>
+          <div class="stat-label">Metric three</div>
+          <div class="stat-context">What it measures</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num">4 min</div>
+          <div class="stat-label">Metric four</div>
+          <div class="stat-context">What it measures</div>
+        </div>
+      </div>
+      <div class="callout">
+        <strong>Why these numbers matter:</strong> Replace this with the insight the stat
+        row implies. If you can't explain what the numbers mean in one sentence, the
+        numbers are wrong.
+      </div>
+    </div>
+
+    <!-- ══ SECTION: Features ════════════════════════════════════ -->
+    <div class="block reveal" id="s-features" data-title="Features">
+      <div class="block-tag">What it does</div>
+      <h2 class="block-title">Built to solve the<br>actual problem</h2>
+      <p class="block-desc">
+        Two sentences on the core capability. Outcomes first. Avoid feature lists
+        that read like a changelog.
+      </p>
+
+      <div class="grid-3" style="margin-bottom:28px">
+        <div class="card reveal">
+          <div class="card-icon">⚡</div>
+          <div class="card-title">Feature one</div>
+          <div class="card-body">
+            What it does in one sentence. Then one sentence on why it matters
+            to the person reading this.
+          </div>
+        </div>
+        <div class="card reveal">
+          <div class="card-icon">🔒</div>
+          <div class="card-title">Feature two</div>
+          <div class="card-body">
+            Same pattern. Real benefit, not a technical description.
+            Concrete where possible.
+          </div>
+        </div>
+        <div class="card reveal">
+          <div class="card-icon">📊</div>
+          <div class="card-title">Feature three</div>
+          <div class="card-body">
+            One sentence on capability. One sentence on what that unlocks
+            for the user.
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="feature-card reveal">
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px">Differentiator one</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.6">
+            The thing your alternative doesn't do. Specific, verifiable, not just
+            "better" or "smarter."
+          </div>
+        </div>
+        <div class="feature-card reveal" style="border-left-color:var(--accent-2)">
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px">Differentiator two</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.6">
+            The second thing competitors haven't built yet. One sentence.
+            If you need more you haven't found the real differentiator.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION: Demo / how it works ════════════════════════ -->
+    <div class="block reveal" id="s-demo" data-title="Demo">
+      <div class="block-tag">How it works</div>
+      <h2 class="block-title">Three steps.<br>That's the whole thing.</h2>
+      <p class="block-desc">
+        Keep this to three steps. If it takes more, reframe until it doesn't.
+        Clients buy outcomes, not processes.
+      </p>
+
+      <div class="grid-2" style="gap:40px;align-items:start">
+        <!-- Step list -->
+        <div class="timeline reveal">
+          <div class="timeline-item">
+            <div class="timeline-line"></div>
+            <div class="timeline-icon">1</div>
+            <div class="timeline-body">
+              <div class="timeline-title">Step one title</div>
+              <div class="timeline-desc">
+                What the user does. One sentence. Active voice.
+                Avoid the word "simply."
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-line"></div>
+            <div class="timeline-icon">2</div>
+            <div class="timeline-body">
+              <div class="timeline-title">Step two title</div>
+              <div class="timeline-desc">
+                What the system does for them. This is where you describe the
+                magic without using the word magic.
+              </div>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-icon">3</div>
+            <div class="timeline-body">
+              <div class="timeline-title">Step three title</div>
+              <div class="timeline-desc">
+                The outcome. Name the specific thing they get back. A number,
+                a file, a result — not a vague improvement.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code / output preview -->
+        <div class="code-block reveal">
+          <div class="code-block-header">
+            <div class="code-dots">
+              <div class="code-dot"></div>
+              <div class="code-dot"></div>
+              <div class="code-dot"></div>
+            </div>
+            <div class="code-filename">output-example.json</div>
+            <span class="badge badge-success">Live</span>
+          </div>
+          <pre><span class="code-cmt">// Replace with real output from YOUR product.</span>
+<span class="code-cmt">// Nothing sells a product faster than showing</span>
+<span class="code-cmt">// exactly what the client gets back.</span>
+{
+  <span class="code-str">"status"</span>: <span class="code-str">"complete"</span>,
+  <span class="code-str">"result"</span>: {
+    <span class="code-str">"score"</span>:  <span class="code-num">94.2</span>,
+    <span class="code-str">"items"</span>: [<span class="code-str">"finding one"</span>, <span class="code-str">"finding two"</span>],
+    <span class="code-str">"next"</span>:  <span class="code-str">"recommended action"</span>
+  },
+  <span class="code-str">"elapsed_ms"</span>: <span class="code-num">1240</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION: Pricing ═════════════════════════════════════ -->
+    <div class="block reveal" id="s-pricing" data-title="Pricing">
+      <div class="block-tag">Pricing</div>
+      <h2 class="block-title">Simple, transparent.</h2>
+      <p class="block-desc">
+        No hidden fees. No per-seat surprise. Delete tiers you don't need.
+        One price is better than three if you have one buyer persona.
+      </p>
+
+      <div class="grid-3">
+        <div class="pricing-card reveal">
+          <div class="pricing-plan">Starter</div>
+          <div class="pricing-price">Free</div>
+          <div class="pricing-period">Forever</div>
+          <ul class="pricing-features">
+            <li>Feature or limit 1</li>
+            <li>Feature or limit 2</li>
+            <li>Feature or limit 3</li>
+          </ul>
+          <button class="btn btn-ghost" style="width:100%;justify-content:center">
+            Get started
+          </button>
+        </div>
+
+        <div class="pricing-card featured reveal">
+          <div class="pricing-plan">
+            Pro
+            <span class="badge badge-accent" style="margin-left:6px">Most popular</span>
+          </div>
+          <div class="pricing-price" style="color:var(--accent)">€99</div>
+          <div class="pricing-period">per month</div>
+          <ul class="pricing-features">
+            <li>Everything in Starter</li>
+            <li>Feature or limit 4</li>
+            <li>Feature or limit 5</li>
+            <li>Feature or limit 6</li>
+            <li>Priority support</li>
+          </ul>
+          <button class="btn btn-accent" style="width:100%;justify-content:center" onclick="handleCTA()">
+            Start free trial
+          </button>
+        </div>
+
+        <div class="pricing-card reveal">
+          <div class="pricing-plan">Enterprise</div>
+          <div class="pricing-price">Custom</div>
+          <div class="pricing-period">Talk to us</div>
+          <ul class="pricing-features">
+            <li>Everything in Pro</li>
+            <li>Custom integrations</li>
+            <li>SLA + dedicated support</li>
+            <li>Custom contracts</li>
+          </ul>
+          <button class="btn btn-ghost" style="width:100%;justify-content:center">
+            Contact sales
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SECTION: CTA ══════════════════════════════════════════ -->
+    <div class="block reveal" id="s-cta" data-title="CTA">
+      <div class="cta-block">
+        <h2 class="cta-title">
+          Ready to
+          <span class="kinetic-text">get started?</span>
+        </h2>
+        <p class="cta-sub">
+          Replace this with a one-line summary of the actual next step. Make the
+          action obvious. Remove the friction sentence.
+        </p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative">
+          <button class="btn btn-accent" onclick="handleCTA()">
+            Start now
+            <span>→</span>
+          </button>
+          <button class="btn btn-ghost" onclick="showToast('Contact coming soon')">
+            Book a call
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end page-body -->
+
+  <!-- ── Footer ───────────────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer-text" id="footerText">
+      Product Name &copy; 2026
+    </div>
+    <div class="footer-links">
+      <a href="#" onclick="window.print(); return false">Print / PDF</a>
+      <a href="#" onclick="copyLink(); return false">Share</a>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ── CONFIG — only change PRODUCT_SLUG when forking ──────────
+    const PRODUCT_SLUG = 'product-name';   // e.g. 'meridian-demo'
+    const LS = (key) => `${PRODUCT_SLUG}:${key}`;
+
+    // ── Theme ────────────────────────────────────────────────────
+    const savedTheme = localStorage.getItem(LS('theme')) || 'dark';
+    if (savedTheme === 'light') document.documentElement.classList.add('light');
+
+    function toggleTheme() {
+      const isLight = document.documentElement.classList.toggle('light');
+      localStorage.setItem(LS('theme'), isLight ? 'light' : 'dark');
+      document.getElementById('themeBtn').textContent = isLight ? '●' : '◑';
+    }
+    document.getElementById('themeBtn').textContent =
+      document.documentElement.classList.contains('light') ? '●' : '◑';
+
+    // ── Build nav tabs from section data-title attrs ─────────────
+    const sections = Array.from(document.querySelectorAll('[data-title]'));
+    const navTabsEl = document.getElementById('navTabs');
+
+    sections.forEach(sec => {
+      const title = sec.dataset.title;
+      if (title === 'Hero') return; // skip hero from tabs
+      const btn = document.createElement('button');
+      btn.className = 'nav-tab';
+      btn.textContent = title;
+      btn.onclick = () => scrollToSection(sec.id);
+      navTabsEl.appendChild(btn);
+    });
+
+    // ── Scroll-based active tab ──────────────────────────────────
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.target.dataset.title !== 'Hero') {
+          document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+          const activeTab = Array.from(navTabsEl.querySelectorAll('.nav-tab'))
+            .find(t => t.textContent === entry.target.dataset.title);
+          if (activeTab) activeTab.classList.add('active');
+          localStorage.setItem(LS('lastSection'), entry.target.id);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    sections.forEach(sec => observer.observe(sec));
+
+    // ── Reveal on scroll ─────────────────────────────────────────
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    // ── Scroll to section ────────────────────────────────────────
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const offset = parseInt(getComputedStyle(document.documentElement)
+        .getPropertyValue('--nav-h')) || 52;
+      const top = el.getBoundingClientRect().top + window.scrollY - offset - 16;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+
+    // ── CTA handler ──────────────────────────────────────────────
+    function handleCTA() {
+      // Do NOT wire an outbound link here with window.open() — sandboxed
+      // viewers (Claude Artifacts, iframe embeds) block script-opened popups
+      // silently, and the button just dies. For a link, delete this handler
+      // and use a real anchor in the markup instead:
+      //   <a href="https://your-url.com" target="_blank" rel="noopener">
+      // This handler is fine for in-page work: a form reveal, a modal, a toast.
+      showToast('CTA not wired yet — replace handleCTA()');
+    }
+
+    // ── Toast ────────────────────────────────────────────────────
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    // ── Clipboard ────────────────────────────────────────────────
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href)
+        .then(() => showToast('Link copied'))
+        .catch(() => showToast('Copy failed — use Ctrl+C'));
+    }
+  </script>
+</body>
+</html>

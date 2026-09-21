@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<!--
+  ╔═══════════════════════════════════════════════════════════════════╗
+  ║  STANDALONE EXPORT SCAFFOLD  —  light / bone variant              ║
+  ╠═══════════════════════════════════════════════════════════════════╣
+  ║  FORK THIS FILE for every client deliverable, report, or demo.    ║
+  ║                                                                   ║
+  ║  NAMING CONVENTION                                                ║
+  ║    product-name-v1.html         (slug, no spaces, version suffix) ║
+  ║    Examples:                                                      ║
+  ║      meridian-audit-v1.html                                       ║
+  ║      harbor-brief-v2.html                                         ║
+  ║      orbit-onboarding-v1.html                                     ║
+  ║                                                                   ║
+  ║  LOCALSTORAGE KEY PATTERN                                         ║
+  ║    [product-slug]:[key]                                           ║
+  ║    Examples:                                                      ║
+  ║      meridian-audit:currentSection                                ║
+  ║      harbor-brief:theme                                           ║
+  ║      orbit-onboarding:lastViewed                                  ║
+  ║    ─────────────────────────────────────────────────────────────  ║
+  ║    Replace PRODUCT_SLUG below. That's the only string to change   ║
+  ║    when forking — everything else keys off it automatically.      ║
+  ║                                                                   ║
+  ║  THEME VARS  (light → dark swap reference)                        ║
+  ║    --bg:          #F7F4EE  →  #0D0D0D                             ║
+  ║    --surface:     #FFFFFF  →  #1A1A1A                             ║
+  ║    --surface-alt: #F0ECE4  →  #151515                             ║
+  ║    --border:      #E5DDD0  →  #272727                             ║
+  ║    --text:        #1A1A1A  →  #E8E4DC                             ║
+  ║    --text-muted:  #6B6560  →  #888480                             ║
+  ║    --nav-bg:      #1A1A1A  →  #0A0A0A                             ║
+  ║    --nav-text:    #F7F4EE  →  #E8E4DC                             ║
+  ║    --accent:      #2D5BE3  →  #7B61FF                             ║
+  ║    --accent-dim:  #EEF2FC  →  #1C1730                             ║
+  ║                                                                   ║
+  ║  ZERO EXTERNAL DEPENDENCIES                                       ║
+  ║    No CDN, no fonts, no analytics, no images (use inline SVG).    ║
+  ║    File works offline, on any device, forever.                    ║
+  ╚═══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Title — Product Name</title>
+  <style>
+    /* ── Design tokens ───────────────────────────────────────────── */
+    :root {
+      --bg:          #F7F4EE;
+      --surface:     #FFFFFF;
+      --surface-alt: #F0ECE4;
+      --border:      #E5DDD0;
+      --text:        #1A1A1A;
+      --text-muted:  #6B6560;
+      --nav-bg:      #1A1A1A;
+      --nav-text:    #F7F4EE;
+      --accent:      #2D5BE3;
+      --accent-dim:  #EEF2FC;
+      --success:     #1A7F4B;
+      --warning:     #B45309;
+      --danger:      #B91C1C;
+      --radius:      8px;
+      --radius-lg:   12px;
+      --shadow-sm:   0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+      --shadow:      0 4px 12px rgba(0,0,0,.10), 0 2px 4px rgba(0,0,0,.06);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
+              Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo,
+                   Consolas, monospace;
+      --nav-h: 52px;
+      --sidebar-w: 220px;
+      --max-content: 740px;
+    }
+
+    /* dark mode override (add class="dark" to <html>) */
+    html.dark {
+      --bg:          #0D0D0D;
+      --surface:     #1A1A1A;
+      --surface-alt: #151515;
+      --border:      #272727;
+      --text:        #E8E4DC;
+      --text-muted:  #888480;
+      --nav-bg:      #0A0A0A;
+      --nav-text:    #E8E4DC;
+      --accent:      #7B61FF;
+      --accent-dim:  #1C1730;
+      --shadow-sm:   0 1px 3px rgba(0,0,0,.4);
+      --shadow:      0 4px 12px rgba(0,0,0,.5);
+    }
+
+    /* ── Reset ───────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+    }
+
+    /* ── Nav bar ─────────────────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: var(--nav-bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 100;
+      gap: 12px;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .nav-logo {
+      width: 28px; height: 28px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+    .nav-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--nav-text);
+      letter-spacing: 0.01em;
+    }
+    .nav-subtitle {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      margin-left: 2px;
+    }
+
+    .nav-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-btn {
+      height: 32px;
+      padding: 0 14px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s, opacity 0.15s;
+      white-space: nowrap;
+    }
+    .nav-btn:disabled { opacity: 0.3; pointer-events: none; }
+    .nav-btn-ghost {
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      border-color: rgba(255,255,255,0.15);
+    }
+    .nav-btn-ghost:hover { background: rgba(255,255,255,0.08); }
+    .nav-btn-accent {
+      background: var(--accent);
+      color: #fff;
+    }
+    .nav-btn-accent:hover { opacity: 0.88; }
+    .nav-progress {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: rgba(255,255,255,0.45);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+    .nav-dots {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .nav-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      transition: background 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .nav-dot.active {
+      background: var(--accent);
+      transform: scale(1.3);
+    }
+    .nav-dot:hover:not(.active) { background: rgba(255,255,255,0.5); }
+
+    /* ── Layout ──────────────────────────────────────────────────── */
+    .layout {
+      display: flex;
+      min-height: 100vh;
+      padding-top: var(--nav-h);
+    }
+
+    /* sidebar — hidden on mobile */
+    .sidebar {
+      position: fixed;
+      top: var(--nav-h);
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .sidebar-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0 18px 8px;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 0;
+      transition: background 0.12s, color 0.12s;
+      border: none;
+      background: none;
+      text-align: left;
+      width: 100%;
+    }
+    .sidebar-item:hover { background: var(--surface-alt); color: var(--text); }
+    .sidebar-item.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .sidebar-item-num {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      background: var(--surface-alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .sidebar-item.active .sidebar-item-num {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* main content */
+    .main {
+      flex: 1;
+      margin-left: var(--sidebar-w);
+      padding: 40px 32px 80px;
+    }
+
+    /* section visibility */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── Section layout ──────────────────────────────────────────── */
+    .section-header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .section-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.65;
+    }
+
+    /* ── Content components ──────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+    .card + .card { margin-top: 16px; }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    /* stat block */
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--text);
+      line-height: 1;
+    }
+    .stat-value.accent { color: var(--accent); }
+    .stat-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+
+    /* badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .badge-success { background: #DCFCE7; color: var(--success); }
+    .badge-warning { background: #FEF3C7; color: var(--warning); }
+    .badge-danger  { background: #FEE2E2; color: var(--danger); }
+    .badge-neutral { background: var(--surface-alt); color: var(--text-muted); }
+    .badge-accent  { background: var(--accent-dim); color: var(--accent); }
+
+    html.dark .badge-success { background: #0E2E1B; }
+    html.dark .badge-warning { background: #2A1A00; }
+    html.dark .badge-danger  { background: #2A0A0A; }
+
+    /* list */
+    .check-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .check-list li {
+      display: flex;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .check-list .icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .icon-ok   { background: #DCFCE7; color: var(--success); }
+    .icon-warn { background: #FEF3C7; color: var(--warning); }
+    .icon-fail { background: #FEE2E2; color: var(--danger); }
+    html.dark .icon-ok   { background: #0E2E1B; }
+    html.dark .icon-warn { background: #2A1A00; }
+    html.dark .icon-fail { background: #2A0A0A; }
+
+    /* highlight box */
+    .callout {
+      border-left: 3px solid var(--accent);
+      background: var(--accent-dim);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 16px 18px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+    .callout strong { color: var(--accent); }
+
+    /* table */
+    .table-wrap { overflow-x: auto; border-radius: var(--radius-lg); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: var(--surface-alt);
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface-alt); }
+
+    /* code block */
+    pre {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--text);
+      overflow-x: auto;
+    }
+    code { font-family: var(--font-mono); font-size: 0.9em; }
+
+    /* divider */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 28px 0;
+    }
+
+    /* footer area of each section */
+    .section-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .section-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 18px;
+      border-radius: var(--radius);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      transition: background 0.15s, border-color 0.15s;
+      box-shadow: var(--shadow-sm);
+    }
+    .section-nav-btn:hover { background: var(--surface-alt); }
+    .section-nav-btn:disabled { opacity: 0.3; pointer-events: none; }
+    .section-nav-btn.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .section-nav-btn.primary:hover { opacity: 0.88; background: var(--accent); }
+
+    /* ── Typography ──────────────────────────────────────────────── */
+    h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; margin: 24px 0 12px; }
+    h3 { font-size: 16px; font-weight: 700; margin: 20px 0 8px; }
+    p  { margin-bottom: 14px; color: var(--text); }
+    p:last-child { margin-bottom: 0; }
+    strong { font-weight: 700; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Toast ───────────────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--nav-bg);
+      color: var(--nav-text);
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Print ───────────────────────────────────────────────────── */
+    @media print {
+      .nav, .sidebar, .section-nav, .toast { display: none !important; }
+      .layout { display: block; padding-top: 0; }
+      .main { margin-left: 0; padding: 0; }
+      .section { display: block !important; page-break-after: always; }
+      .section:last-child { page-break-after: avoid; }
+      body { font-size: 12pt; }
+    }
+
+    /* ── Mobile ──────────────────────────────────────────────────── */
+    @media (max-width: 767px) {
+      :root { --sidebar-w: 0px; }
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 24px 16px 60px; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .section-title { font-size: 22px; }
+      .stat-value { font-size: 26px; }
+      .nav-subtitle { display: none; }
+      .nav-progress .count { display: none; }
+    }
+    @media (max-width: 480px) {
+      .nav-title { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Nav bar ─────────────────────────────────────────────── -->
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-logo" id="navLogo">PN</div>
+      <div>
+        <div class="nav-title" id="navTitle">Product Name</div>
+        <div class="nav-subtitle" id="navSubtitle">Report / v1</div>
+      </div>
+    </div>
+
+    <div class="nav-controls">
+      <div class="nav-progress">
+        <span class="count"><span id="currentNum">1</span> / <span id="totalNum">4</span></span>
+        <div class="nav-dots" id="navDots"></div>
+      </div>
+      <button class="nav-btn nav-btn-ghost" id="btnPrev" onclick="navigate(-1)">
+        ← Back
+      </button>
+      <button class="nav-btn nav-btn-accent" id="btnNext" onclick="navigate(1)">
+        Next →
+      </button>
+      <button class="nav-btn nav-btn-ghost" onclick="toggleTheme()" title="Toggle dark mode" id="themeBtn">
+        ◑
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Sidebar ─────────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-label">Sections</div>
+    <div id="sidebarNav"></div>
+  </aside>
+
+  <!-- ── Content ─────────────────────────────────────────────── -->
+  <div class="layout">
+    <main class="main" id="main">
+
+      <!-- ══ SECTION 1: Overview ═══════════════════════════════ -->
+      <section class="section" data-title="Overview" id="s-overview">
+        <div class="section-header">
+          <span class="section-tag">01 — Overview</span>
+          <h1 class="section-title">What this report covers</h1>
+          <p class="section-desc">
+            A brief description of what the client will find in this document
+            and why it matters to them. One to two sentences.
+          </p>
+        </div>
+
+        <!-- Stats row -->
+        <div class="grid-3" style="margin-bottom:24px">
+          <div class="stat">
+            <div class="stat-label">Metric One</div>
+            <div class="stat-value accent">94%</div>
+            <div class="stat-sub">What it means</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Metric Two</div>
+            <div class="stat-value">€12,400</div>
+            <div class="stat-sub">What it means</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Metric Three</div>
+            <div class="stat-value">31</div>
+            <div class="stat-sub">What it means</div>
+          </div>
+        </div>
+
+        <!-- Callout -->
+        <div class="callout" style="margin-bottom:24px">
+          <strong>Key insight:</strong> Replace this with the single most important
+          thing the client should take away from this section. Keep it to two
+          sentences maximum.
+        </div>
+
+        <!-- Summary card -->
+        <div class="card">
+          <div class="card-title">Summary findings</div>
+          <ul class="check-list">
+            <li>
+              <span class="icon icon-ok">✓</span>
+              <span>Positive finding — something that's working well. Keep it specific.</span>
+            </li>
+            <li>
+              <span class="icon icon-warn">!</span>
+              <span>Warning — something that needs attention but is not critical.</span>
+            </li>
+            <li>
+              <span class="icon icon-fail">✕</span>
+              <span>Issue — something that needs to be fixed. Give the exact problem.</span>
+            </li>
+            <li>
+              <span class="icon icon-ok">✓</span>
+              <span>Another positive finding with context about why it matters.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="section-nav">
+          <button class="section-nav-btn" disabled>← Back</button>
+          <span style="font-size:12px;color:var(--text-muted)">Section 1 of 4</span>
+          <button class="section-nav-btn primary" onclick="navigate(1)">Findings →</button>
+        </div>
+      </section>
+
+      <!-- ══ SECTION 2: Findings ════════════════════════════════ -->
+      <section class="section" data-title="Findings" id="s-findings">
+        <div class="section-header">
+          <span class="section-tag">02 — Findings</span>
+          <h1 class="section-title">What we found</h1>
+          <p class="section-desc">
+            Detailed breakdown of the analysis. Group by theme, not by source.
+            Clients care about outcomes, not methodology.
+          </p>
+        </div>
+
+        <h2>Finding area one</h2>
+        <p>
+          Explanation of the first major finding. Stick to facts here —
+          recommendations come in section three. Two to three paragraphs maximum
+          per area.
+        </p>
+        <p>
+          Supporting detail with specific numbers or examples. Vague findings
+          are useless findings. If you can't make it concrete, leave it out.
+        </p>
+
+        <hr class="divider">
+
+        <h2>Finding area two</h2>
+
+        <div class="card">
+          <div class="card-title">Data table example</div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Status</th>
+                  <th>Value</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Row one</td>
+                  <td><span class="badge badge-success">Active</span></td>
+                  <td>€4,200</td>
+                  <td>Context note here</td>
+                </tr>
+                <tr>
+                  <td>Row two</td>
+                  <td><span class="badge badge-warning">Pending</span></td>
+                  <td>€1,800</td>
+                  <td>Context note here</td>
+                </tr>
+                <tr>
+                  <td>Row three</td>
+                  <td><span class="badge badge-danger">Issue</span></td>
+                  <td>€0</td>
+                  <td>Needs immediate attention</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <h2>Technical detail (if needed)</h2>
+        <pre>// Example code or config block
+// Remove this section for non-technical deliverables
+const config = {
+  key: "value",
+  threshold: 0.85
+};</pre>
+
+        <div class="section-nav">
+          <button class="section-nav-btn" onclick="navigate(-1)">← Overview</button>
+          <span style="font-size:12px;color:var(--text-muted)">Section 2 of 4</span>
+          <button class="section-nav-btn primary" onclick="navigate(1)">Recommendations →</button>
+        </div>
+      </section>
+
+      <!-- ══ SECTION 3: Recommendations ════════════════════════ -->
+      <section class="section" data-title="Recommendations" id="s-recs">
+        <div class="section-header">
+          <span class="section-tag">03 — Recommendations</span>
+          <h1 class="section-title">What to do next</h1>
+          <p class="section-desc">
+            Prioritised action list. Most important item first.
+            Every recommendation needs a why, a how, and a rough effort estimate.
+          </p>
+        </div>
+
+        <div class="grid-2" style="margin-bottom:24px">
+          <div class="card">
+            <div class="card-title" style="color:var(--danger)">High priority</div>
+            <ul class="check-list">
+              <li>
+                <span class="icon icon-fail">1</span>
+                <div>
+                  <strong>Action title here</strong><br>
+                  <span style="font-size:13px;color:var(--text-muted)">
+                    Why it matters and what to do. Keep it to 2 sentences.
+                  </span>
+                </div>
+              </li>
+              <li>
+                <span class="icon icon-fail">2</span>
+                <div>
+                  <strong>Second high-priority action</strong><br>
+                  <span style="font-size:13px;color:var(--text-muted)">
+                    Specific step with expected outcome.
+                  </span>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-title" style="color:var(--warning)">Medium priority</div>
+            <ul class="check-list">
+              <li>
+                <span class="icon icon-warn">3</span>
+                <div>
+                  <strong>Medium-priority action</strong><br>
+                  <span style="font-size:13px;color:var(--text-muted)">
+                    Do this after the high-priority items are resolved.
+                  </span>
+                </div>
+              </li>
+              <li>
+                <span class="icon icon-warn">4</span>
+                <div>
+                  <strong>Another medium action</strong><br>
+                  <span style="font-size:13px;color:var(--text-muted)">
+                    Optional context or constraint.
+                  </span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Effort vs. impact</div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Action</th>
+                  <th>Effort</th>
+                  <th>Impact</th>
+                  <th>Owner</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>First action</td>
+                  <td><span class="badge badge-success">Low</span></td>
+                  <td><span class="badge badge-danger">High</span></td>
+                  <td>Client</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Second action</td>
+                  <td><span class="badge badge-warning">Medium</span></td>
+                  <td><span class="badge badge-danger">High</span></td>
+                  <td>Client</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Third action</td>
+                  <td><span class="badge badge-danger">High</span></td>
+                  <td><span class="badge badge-warning">Medium</span></td>
+                  <td>Your team</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-nav">
+          <button class="section-nav-btn" onclick="navigate(-1)">← Findings</button>
+          <span style="font-size:12px;color:var(--text-muted)">Section 3 of 4</span>
+          <button class="section-nav-btn primary" onclick="navigate(1)">Summary →</button>
+        </div>
+      </section>
+
+      <!-- ══ SECTION 4: Summary ═════════════════════════════════ -->
+      <section class="section" data-title="Summary" id="s-summary">
+        <div class="section-header">
+          <span class="section-tag">04 — Summary</span>
+          <h1 class="section-title">The bottom line</h1>
+          <p class="section-desc">
+            The single-page version a client can share internally.
+            Everything that matters, nothing that doesn't.
+          </p>
+        </div>
+
+        <div class="callout" style="margin-bottom:24px">
+          <strong>In one sentence:</strong> Replace this with the core message —
+          what should the client remember two weeks from now if they forget
+          everything else?
+        </div>
+
+        <div class="grid-2" style="margin-bottom:24px">
+          <div class="card">
+            <div class="card-title">What's working</div>
+            <ul class="check-list">
+              <li><span class="icon icon-ok">✓</span><span>Positive point one</span></li>
+              <li><span class="icon icon-ok">✓</span><span>Positive point two</span></li>
+              <li><span class="icon icon-ok">✓</span><span>Positive point three</span></li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title">What to fix</div>
+            <ul class="check-list">
+              <li><span class="icon icon-fail">✕</span><span>Issue one (high priority)</span></li>
+              <li><span class="icon icon-warn">!</span><span>Issue two (medium priority)</span></li>
+              <li><span class="icon icon-warn">!</span><span>Issue three (low priority)</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Next steps — 30 days</div>
+          <ul class="check-list">
+            <li>
+              <span class="icon icon-fail">1</span>
+              <div>
+                <strong>Week 1:</strong>
+                <span style="color:var(--text-muted)"> First action to take.</span>
+              </div>
+            </li>
+            <li>
+              <span class="icon icon-warn">2</span>
+              <div>
+                <strong>Week 2:</strong>
+                <span style="color:var(--text-muted)"> Second action to take.</span>
+              </div>
+            </li>
+            <li>
+              <span class="icon icon-ok">3</span>
+              <div>
+                <strong>Week 3-4:</strong>
+                <span style="color:var(--text-muted)"> Follow-up and verification.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div style="margin-top:32px; padding:20px; background:var(--surface-alt); border-radius:var(--radius-lg); display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap">
+          <div>
+            <div style="font-size:12px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px">Questions?</div>
+            <div style="font-size:14px;color:var(--text)">Contact Your Name &mdash; <a href="mailto:you@domain.com">you@domain.com</a></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="section-nav-btn" onclick="window.print()">Print / Save PDF</button>
+            <button class="section-nav-btn" onclick="copyLink()">Copy link</button>
+          </div>
+        </div>
+
+        <div class="section-nav">
+          <button class="section-nav-btn" onclick="navigate(-1)">← Recommendations</button>
+          <span style="font-size:12px;color:var(--text-muted)">Section 4 of 4</span>
+          <button class="section-nav-btn" disabled>Done ✓</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ── CONFIG — only change PRODUCT_SLUG when forking ──────────
+    const PRODUCT_SLUG = 'product-name';   // e.g. 'meridian-audit'
+    const LS = (key) => `${PRODUCT_SLUG}:${key}`;
+
+    // ── Section registry (auto-built from DOM) ───────────────────
+    const sections = Array.from(document.querySelectorAll('.section'));
+    const totalSections = sections.length;
+    let currentIndex = 0;
+
+    // Restore last position from localStorage
+    const saved = parseInt(localStorage.getItem(LS('currentSection')) || '0', 10);
+    if (saved >= 0 && saved < totalSections) currentIndex = saved;
+
+    // ── Theme ────────────────────────────────────────────────────
+    const savedTheme = localStorage.getItem(LS('theme')) || 'light';
+    if (savedTheme === 'dark') document.documentElement.classList.add('dark');
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem(LS('theme'), isDark ? 'dark' : 'light');
+      document.getElementById('themeBtn').textContent = isDark ? '○' : '◑';
+    }
+    document.getElementById('themeBtn').textContent =
+      document.documentElement.classList.contains('dark') ? '○' : '◑';
+
+    // ── Build sidebar + nav dots ─────────────────────────────────
+    const sidebarNav = document.getElementById('sidebarNav');
+    const navDotsEl  = document.getElementById('navDots');
+
+    sections.forEach((sec, i) => {
+      const title = sec.dataset.title || `Section ${i + 1}`;
+
+      // Sidebar item
+      const btn = document.createElement('button');
+      btn.className = 'sidebar-item';
+      btn.innerHTML = `
+        <span class="sidebar-item-num">${i + 1}</span>
+        ${title}
+      `;
+      btn.onclick = () => goTo(i);
+      sidebarNav.appendChild(btn);
+
+      // Nav dot
+      const dot = document.createElement('span');
+      dot.className = 'nav-dot';
+      dot.title = title;
+      dot.onclick = () => goTo(i);
+      navDotsEl.appendChild(dot);
+    });
+
+    document.getElementById('totalNum').textContent = totalSections;
+
+    // ── Navigation ───────────────────────────────────────────────
+    function goTo(index) {
+      if (index < 0 || index >= totalSections) return;
+      currentIndex = index;
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      localStorage.setItem(LS('currentSection'), currentIndex);
+    }
+
+    function navigate(dir) { goTo(currentIndex + dir); }
+
+    function render() {
+      sections.forEach((sec, i) => {
+        sec.classList.toggle('active', i === currentIndex);
+      });
+
+      // Sidebar
+      document.querySelectorAll('.sidebar-item').forEach((el, i) => {
+        el.classList.toggle('active', i === currentIndex);
+      });
+
+      // Dots
+      document.querySelectorAll('.nav-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentIndex);
+      });
+
+      // Counter
+      document.getElementById('currentNum').textContent = currentIndex + 1;
+
+      // Buttons
+      document.getElementById('btnPrev').disabled = currentIndex === 0;
+      document.getElementById('btnNext').disabled = currentIndex === totalSections - 1;
+      document.getElementById('btnNext').textContent =
+        currentIndex === totalSections - 1 ? 'Done' : 'Next →';
+    }
+
+    // ── Toast ────────────────────────────────────────────────────
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2400);
+    }
+
+    // ── Clipboard util ───────────────────────────────────────────
+    function copyLink() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url)
+        .then(() => showToast('Link copied'))
+        .catch(() => showToast('Copy failed — use Ctrl+C'));
+    }
+
+    // ── Init ─────────────────────────────────────────────────────
+    render();
+  </script>
+</body>
+</html>
