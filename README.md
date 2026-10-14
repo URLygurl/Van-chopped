@@ -15,6 +15,7 @@ score and reasons.
 ```bash
 node scripts/seed-demo.js   # optional: generate a demo library
 node server.js              # → http://localhost:4600
+node scripts/build-demo.js  # re-bundle demo/index.html after a CSS change
 ```
 
 Then add your own folders in the sidebar (e.g. `~/Sites`, `~/Documents/Prompts`,
@@ -79,6 +80,68 @@ demo stay in memory; the full app below reads and writes your actual files.
   collapses to one record with multiple tool badges.
 
 ---
+
+## Design system — neo-brutalist sticker book
+
+The UI follows the captured-design contract in `design.md`. Every card, chip,
+button and tile is a die-cut **sticker**: a 2px near-black outline with a hard
+shadow dropped straight down (no blur, no x-offset), flat fill, on warm cream
+paper.
+
+| Token | Value | Role |
+|---|---|---|
+| `--background` | `#f5efe1` | warm cream paper |
+| `--foreground` / `--line` | `#1c1c1c` | ink — text and *every* outline and shadow |
+| `--surface-1` | `#faf7f0` | cards, panels, chips |
+| `--accent-blue` | `#0062d6` | the one "act" colour |
+| `--accent` | `#ff8273` | coral — fill only, never text |
+| `--shadow-2xs … --shadow-shell` | `0 2px 0` … `0 11.8px 0` | the hard-shadow scale |
+
+**Shadow depth tracks element size.** Dense list rows get `2xs` so a long list
+stays scannable; grid cards and modals get the full `card`/`shell` drop. That
+modulation is what the design's five-step shadow scale is for.
+
+**Accessibility — the contract's own audit, applied.** `design.md` §2 flags six
+contrast failures and §9 says to fix them, so this build ships the corrected
+values, not the captured ones: resting blue `#007aff → #0062d6`, coral headline
+`#f56a59 → #c9301f`, pink `#ec4899 → #be185d`, and **ink** (never white) glyphs
+on the green badge. Type pills use a pale tint of their identity colour with ink
+text, which keeps 10px labels above 12:1 while still reading as stickers; the
+saturated colours are kept for the large grid glyph tiles. All 28 foreground/
+background pairs in the UI pass WCAG AA.
+
+**Deliberate deviations**, each for a reason:
+
+- **Light theme only** (`design.md` §2). The dark variant is gone and the theme
+  toggle is hidden via CSS rather than deleted — `app.js` binds to `#mTheme`
+  without a null guard, so removing the markup would throw.
+- **Radii scaled down** (`--r-chip .55rem` … `--r-shell 1.3rem`). The contract's
+  1–1.85rem radii are sized for a marketing page; at a 28px list row they read
+  as pills, which §10 explicitly forbids.
+- **No amber.** `design.md`'s icon-tile palette includes amber-400 `#fcbb00`,
+  which sits ~2° from the AI-action yellow `#F0C040` reserved by the
+  `demo-artifact` skill. Type identity uses violet/sky/emerald/rose/fuchsia/zinc
+  instead.
+
+**Fonts.** Display is the real Bricolage Grotesque ExtraBold (800, `-0.035em`),
+latin subset, embedded as a base64 `@font-face` so both the app and the shipped
+demo work with the network off — no CDN link, per the `demo-artifact` skill's
+offline rule. Body uses the contract's documented system fallback; OpenRunde is
+not redistributable from a public CDN, so it is substituted rather than faked.
+
+### Keeping the demo in sync
+`demo/index.html` is one self-contained file, so the stylesheet has to be
+*copied* into it. That copy used to be hand-maintained and drifted (20,187 bytes
+in the demo vs 16,906 in `public/`); now that the CSS embeds a webfont, hand-sync
+is impossible. `scripts/build-demo.js` injects `public/styles.css` into the demo
+and guarantees the standalone-document wrapper. It touches **only the first**
+`<style>` block — the other two belong to the embedded *sample artifacts* and
+rewriting them would corrupt the very files the classifier is demonstrating.
+
+```bash
+node scripts/build-demo.js            # rebuild
+node scripts/build-demo.js --check    # CI-style: fail if out of sync
+```
 
 ## Architecture — the same 6 stages as Chops
 
