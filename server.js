@@ -211,8 +211,12 @@ function allTags() {
 
 rescan();
 watcher.watch(config.scanPaths);
-server.listen(PORT, () => {
-  console.log(`\n  Artifact Repo running →  http://localhost:${PORT}`);
+// Bind loopback-only by default: this serves your real files over an API with
+// no auth, including PUT (overwrite). On a laptop on shared wifi, binding every
+// interface would expose them. Containers set HOST=0.0.0.0 to publish the port.
+const HOST = process.env.HOST || '127.0.0.1';
+server.listen(PORT, HOST, () => {
+  console.log(`\n  Artifact Repo running →  http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
   console.log(`  Scanning: ${config.scanPaths.join(', ')}`);
   console.log(`  Found ${state.artifacts.length} artifacts (${state.tookMs}ms)\n`);
 });
